@@ -1,0 +1,42 @@
+/* Global */
+
+* {
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+    border: .1px solid lightgray;
+}
+
+/* Typography */
+
+
+
+/* Main Container */
+
+.mainContainer {
+    height: 100vh;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    grid-template-rows: 1fr;
+}
+
+/* Lists Column Container */
+
+.listsColumnContainer {
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-template-rows: 1fr 2fr;
+}
+
+/* List Overview Column Container */
+
+.listOverviewColumnContainer {
+    display: grid;
+    grid-template-rows: 100px 100px 1fr;
+}
+
+/* Task Column Container */
+
+.taskColumnContainer {
+    display: grid;
+}
