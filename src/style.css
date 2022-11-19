@@ -4,54 +4,125 @@
     padding: 0;
     margin: 0;
     box-sizing: border-box;
-    border: .1px solid lightgray;
+    /* border: .1px solid lightgray; */
+}
+
+
+:root {
+    --listNameHeight: 50px;
 }
 
 /* Typography */
 
+* {
+    font-family: Arial, Helvetica, sans-serif;
+}
 
+h1 {
+    font-size: 28px;
+    line-height: 1;
+}
+
+h2 {
+    font-size: 24px;
+    line-height: 1;
+}
+
+h3 {
+    font-size: 22px;
+    line-height: 1;
+    color: grey;
+}
+
+p, li, ul, ::placeholder, a, span {
+    font-size: 18px;
+    line-height: 1.5;
+}
+
+body {
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
 
 /* Main Container */
 
 .mainContainer {
-    height: 100vh;
-    width: 100vw;
+    height: 90vh;
+    width: 90vw;
+    padding: 16px;
 
+    border-radius: 32px;
+    box-shadow: 5px 5px 15px 5px grey;
 
     display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
+    /* grid-template-columns: 1fr 1fr 1fr; */
+    grid-template-columns: 1fr 1fr;
     grid-template-rows: 1fr;
-    gap: 16px;
-    
+}
+
+.inputField {
+    width: 100%;
+    height: var(--listNameHeight);
+    padding: 8px;
+}
+
+.listsColumnContainer, .listOverviewColumnContainer, .listsColumnContainer {
+    padding: 16px;
 }
 
 /* Lists Column Container */
 
 .listsColumnContainer {
-    border-right: 1px solid black;
-    
-
     display: grid;
     grid-template-columns: 1fr;
-    grid-template-rows: 1fr 2fr;
+    grid-template-rows: var(--listNameHeight) 1fr var(--listNameHeight) var(--listNameHeight) 2fr;
+    gap: 16px;
 }
 
-
-
 .listSelected {
-    color: red;
+    background-color: rgba(255, 255, 165, 0.69);
+}
+
+.regularListsContainer {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
 }
 
 /* List Overview Column Container */
 
 .listOverviewColumnContainer {
     display: grid;
-    grid-template-rows: 100px 100px 1fr;
+    grid-template-rows: var(--listNameHeight) var(--listNameHeight) 1fr;
+    border-left: 1px solid black;
+    border-right: 1px solid black;
+    gap: 16px;
 }
 
 .task, .taskCompleted {
     display: flex;
     gap: 16px;
+}
+
+.taskDescription {
+    flex: 1;
+}
+
+.deleteButton {
+    width: 16px;
+    height: 16px;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    display: none;
+}
+
+.task:hover .deleteButton, .taskCompleted:hover .deleteButton {
+    display: flex;
 }
 
 .taskCompleted {

@@ -4,7 +4,7 @@ import './style.css';
 
 const screenController = {
     displayLists: function(lists) {
-        const regularLists = document.querySelector(".regularLists")
+        const regularLists = document.querySelector(".regularListsContainer")
         regularLists.innerHTML = ""
         let i = 0
 
@@ -18,63 +18,56 @@ const screenController = {
         }
     },
     displayTasks: function(tasks) {
-        this.displayUncompletedTasks(tasks)
-        this.displayCompletedTasks(tasks)
-        this.addEventListenersToTasks()
-    },
-    displayUncompletedTasks: function(tasks) {
         const tasksUncompletedContainer = document.querySelector(".tasksUncompletedContainer")
         tasksUncompletedContainer.innerHTML = ""
 
-        for (const task of tasks) {
-            if (task.completed == false) {
-
-                const newTask = document.createElement("div")
-                newTask.className = "task"
-                newTask.id = task.id
-                
-                const newTaskCheckbox = document.createElement("input")
-                newTaskCheckbox.type = "checkbox"
-                newTaskCheckbox.className = "checkbox"
-                newTaskCheckbox.checked = false
-                newTask.appendChild(newTaskCheckbox)
-                
-                const newTaskDescription = document.createElement("p")
-                newTaskDescription.innerText = task.description
-                newTask.appendChild(newTaskDescription)
-                
-                tasksUncompletedContainer.appendChild(newTask)
-                
-                this.addEventListenersToTasks()
-            }
-        }
-    },
-    displayCompletedTasks: function(tasks) {
         const tasksCompletedContainer = document.querySelector(".tasksCompletedContainer")
         tasksCompletedContainer.innerHTML = ""
 
         for (const task of tasks) {
-            if (task.completed == true) {
-
-                const newTask = document.createElement("div")
-                newTask.className = "taskCompleted"
-                newTask.id = task.id
-                
-                const newTaskCheckbox = document.createElement("input")
-                newTaskCheckbox.type = "checkbox"
-                newTaskCheckbox.className = "checkbox"
-                newTaskCheckbox.checked = true
-                newTask.appendChild(newTaskCheckbox)
-                
-                const newTaskDescription = document.createElement("p")
-                newTaskDescription.innerText = task.description
-                newTask.appendChild(newTaskDescription)
-                
+            const newTask = this.createTaskElement(task)
+            if (task.completed == false) {
+                tasksUncompletedContainer.appendChild(newTask)
+            } else {
                 tasksCompletedContainer.appendChild(newTask)
-                
-                this.addEventListenersToTasks()
             }
+
         }
+        this.addEventListenersToTasks()
+    },
+    createTaskElement: function(task) {
+        const newTask = document.createElement("div")
+        newTask.className = "task"
+        newTask.id = task.id
+        console.log(newTask)
+        
+        const newTaskCheckbox = document.createElement("input")
+        newTaskCheckbox.type = "checkbox"
+        newTaskCheckbox.className = "checkbox"
+        newTask.appendChild(newTaskCheckbox)
+        
+        const newTaskDescription = document.createElement("p")
+        newTaskDescription.className = "taskDescription"
+        newTaskDescription.innerText = task.description
+        newTask.appendChild(newTaskDescription)
+
+        const deleteButton = document.createElement("button")
+        deleteButton.className = "deleteButton"
+        deleteButton.innerText = "x"
+        newTask.appendChild(deleteButton)
+
+        if (task.completed == false) {
+            newTaskCheckbox.checked = false
+        } else {
+            newTaskCheckbox.checked = true
+            newTask.className = "taskCompleted"
+        }
+        return newTask
+    },
+    displayListName: function(listName) {
+        const listNameElement = document.querySelector(".listName")
+        listNameElement.innerText = listName
+
     },
     addEventListenersToLists: function() {
         const lists = document.getElementsByClassName("list")
@@ -94,6 +87,16 @@ const screenController = {
                 else coordinator.unCompleteTask(taskID)
             })
         }
+
+        const taskDeleteButtons = document.getElementsByClassName("deleteButton")
+
+        for (const deleteButton of taskDeleteButtons) {
+            deleteButton.addEventListener("click", (e) => {
+                const taskID = e.path[1].id
+                coordinator.deleteTask(taskID)
+            })
+        }
+        
     },
     highlightSelectedList: function(listID) {
         const lists = document.getElementsByClassName("list")
@@ -142,8 +145,7 @@ const coordinator = {
         // this.addNewTask("Buy bananas 2", 1, "23/11/2022")
         // this.addNewTask("Buy bread 2", 1, "23/11/2022")
 
-        screenController.highlightSelectedList(this.selectedListID)
-        screenController.displayTasks(taskController.getTasks(this.selectedListID))
+        this.selectList(this.selectedListID)
 
         screenController.addEventListenerToAddNewTaskField()
         screenController.addEventListenerToAddNewListField()
@@ -162,6 +164,9 @@ const coordinator = {
 
         const tasks = taskController.getTasks(listID)
         screenController.displayTasks(tasks)
+
+        const listName = taskController.getListName(listID)
+        screenController.displayListName(listName)
 
         this.selectedListID = listID
     },
@@ -189,7 +194,14 @@ const coordinator = {
         taskController.unCompleteTask(task)
         const tasks = taskController.getTasks(this.selectedListID)
         screenController.displayTasks(tasks)
-    }
+    },
+    deleteTask: function(taskID) {
+        const task = taskController.getTask(taskID, this.selectedListID)
+        taskController.deleteTask(task)
+        const tasks = taskController.getTasks(this.selectedListID)
+        screenController.displayTasks(tasks)
+    },
+
 
 }
 
@@ -225,7 +237,7 @@ const taskController = {
     addNewTask: function(task, listID, dueDate) {
         const newTask = new this.taskClass(task, listID, dueDate)
         this.lists[listID].tasks.push(newTask)
-        newTask.id = `task${this.lists[listID].tasks.indexOf(newTask)}`
+        newTask.id = `${this.lists[listID].tasks.indexOf(newTask)}`
         return this.lists[listID].tasks
     },
     getTasks: function(listID) {
@@ -236,8 +248,11 @@ const taskController = {
             if (list.name === listName) return list.id
         }
     },
+    getListName: function(listID) {
+        return this.lists[listID].name
+    },
     getTask: function(taskID, selectedListID) {
-        const taskIndex = Number(taskID.replace(/task/, ""))
+        const taskIndex = Number(taskID)
         return this.lists[selectedListID].tasks[taskIndex]
     },
     completeTask: function(task) {
@@ -245,6 +260,19 @@ const taskController = {
     },
     unCompleteTask: function(task) {
         task.completed = false
+    },
+    deleteTask: function(task) {
+        const listID = task.listID
+        this.lists[listID].tasks.splice(task.id,1)
+        this.updateTaskIds(listID)
+    },
+    updateTaskIds: function(listID) {
+        console.log(this.lists[listID])
+        let i = 0
+
+        this.lists[listID].tasks.forEach((task) => {
+            task.id = i++
+        })
     }
 }
 
