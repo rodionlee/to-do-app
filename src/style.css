@@ -15,17 +15,31 @@
 
 .mainContainer {
     height: 100vh;
+    width: 100vw;
+
+
     display: grid;
     grid-template-columns: 1fr 1fr 1fr;
     grid-template-rows: 1fr;
+    gap: 16px;
+    
 }
 
 /* Lists Column Container */
 
 .listsColumnContainer {
+    border-right: 1px solid black;
+    
+
     display: grid;
     grid-template-columns: 1fr;
     grid-template-rows: 1fr 2fr;
+}
+
+
+
+.listSelected {
+    color: red;
 }
 
 /* List Overview Column Container */
@@ -35,8 +49,18 @@
     grid-template-rows: 100px 100px 1fr;
 }
 
+.task, .taskCompleted {
+    display: flex;
+    gap: 16px;
+}
+
+.taskCompleted {
+    text-decoration: line-through;
+}
+
 /* Task Column Container */
 
 .taskColumnContainer {
     display: grid;
+    grid-template-rows: 100px 1fr;
 }
