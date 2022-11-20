@@ -116,9 +116,30 @@ body {
 .listOverviewColumnContainer {
     display: grid;
     grid-template-rows: var(--listNameHeight) var(--listNameHeight) 1fr;
+    grid-template-columns: 4fr 1fr;
     border-left: 1px solid black;
     border-right: 1px solid black;
     gap: 16px;
+}
+
+.selectedListName {
+    grid-column: 1 / 3;
+}
+
+#addNewTaskName {
+    grid-column: 1 / 2;
+}
+
+#addNewTaskDate {
+    grid-column: 2 / 3;
+}
+
+.tasksUncompletedContainer {
+    grid-column: 1 / 3;
+}
+
+.tasksCompletedContainer {
+    grid-column: 1 / 3;
 }
 
 .task, .taskCompleted {

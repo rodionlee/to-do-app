@@ -62,6 +62,11 @@ const screenController = {
         newTaskDescription.innerText = task.description
         newTask.appendChild(newTaskDescription)
 
+        const dueDate = document.createElement("p")
+        dueDate.className = "dueDate"
+        dueDate.innerText = task.dueDate
+        newTask.appendChild(dueDate)
+
         const deleteButton = document.createElement("button")
         deleteButton.className = "taskDeleteButton"
         deleteButton.innerText = "x"
@@ -128,9 +133,13 @@ const screenController = {
         list.classList.add("listSelected")
     },
     addEventListenerToAddNewTaskField: function() {
-        const addNewTaskField = document.getElementById("addNewTaskField")
-        addNewTaskField.addEventListener("keyup", (key) => {
-            if (key.code === "Enter") coordinator.processAddNewTaskField(addNewTaskField.value)
+        const addNewTaskName = document.getElementById("addNewTaskName")
+        const addNewTaskDate = document.getElementById("addNewTaskDate")
+        addNewTaskName.addEventListener("keyup", (key) => {
+            if (key.code === "Enter") coordinator.processAddNewTaskField(addNewTaskName.value, addNewTaskDate.value)
+        })
+        addNewTaskDate.addEventListener("input", () => {
+            coordinator.processAddNewTaskField(addNewTaskName.value, addNewTaskDate.value)
         })
     },
     addEventListenerToAddNewListField: function() {
@@ -139,9 +148,11 @@ const screenController = {
             if (key.code === "Enter") coordinator.processAddNewListField(addNewListField.value)
         })
     },
-    clearAddNewTaskField: function() {
-        const addNewTaskField = document.getElementById("addNewTaskField")
-        addNewTaskField.value = ""
+    clearAddNewTask: function() {
+        const addNewTaskName = document.getElementById("addNewTaskName")
+        addNewTaskName.value = ""
+        const addNewTaskDate = document.getElementById("addNewTaskDate")
+        addNewTaskDate.value = ""
     },
     clearAddNewListField: function() {
         const addNewListField = document.getElementById("addNewListField")
@@ -192,9 +203,9 @@ const coordinator = {
 
         this.selectedListID = listID
     },
-    processAddNewTaskField: function(input) {
-        this.addNewTask(input, this.selectedListID, "10/10/1900")
-        screenController.clearAddNewTaskField()
+    processAddNewTaskField: function(name, dueDate) {
+        this.addNewTask(name, this.selectedListID, dueDate)
+        screenController.clearAddNewTask()
     },
     processAddNewListField: function(input) {
         this.addNewList(input)
@@ -315,7 +326,8 @@ const taskController = {
         this.lists.forEach((list) => {
             list.id = i++
         })
-    }
+    },
+    
 
 
 
