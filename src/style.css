@@ -91,6 +91,26 @@ body {
     gap: 8px;
 }
 
+.list {
+    display: flex;
+    justify-content: space-between;
+}
+
+.listDeleteButton {
+    width: 16px;
+    height: 16px;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    display: none;
+}
+
+.list:hover .listDeleteButton {
+    display: flex;
+}
+
 /* List Overview Column Container */
 
 .listOverviewColumnContainer {
@@ -110,7 +130,7 @@ body {
     flex: 1;
 }
 
-.deleteButton {
+.taskDeleteButton {
     width: 16px;
     height: 16px;
 
@@ -121,7 +141,7 @@ body {
     display: none;
 }
 
-.task:hover .deleteButton, .taskCompleted:hover .deleteButton {
+.task:hover .taskDeleteButton, .taskCompleted:hover .taskDeleteButton {
     display: flex;
 }
 

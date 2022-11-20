@@ -6,16 +6,28 @@ const screenController = {
     displayLists: function(lists) {
         const regularLists = document.querySelector(".regularListsContainer")
         regularLists.innerHTML = ""
-        let i = 0
 
         for (const list of lists) {
-            const newList = document.createElement("div")
-            newList.innerText = list.name
-            newList.className = "list"
-            newList.id = i++
-            
+            const newList = this.createListElement(list.name)
+            newList.id = lists.indexOf(list)
             regularLists.appendChild(newList)
         }
+    },
+    createListElement: function(listName) {
+        const newList = document.createElement("div")
+        newList.className = "list"
+
+        const newListName = document.createElement("p")
+        newListName.innerText = listName
+        newListName.className = "listName"
+        newList.appendChild(newListName)
+
+        const deleteButton = document.createElement("button")
+        deleteButton.className = "listDeleteButton"
+        deleteButton.innerText = "x"
+        newList.appendChild(deleteButton)
+
+        return newList
     },
     displayTasks: function(tasks) {
         const tasksUncompletedContainer = document.querySelector(".tasksUncompletedContainer")
@@ -39,7 +51,6 @@ const screenController = {
         const newTask = document.createElement("div")
         newTask.className = "task"
         newTask.id = task.id
-        console.log(newTask)
         
         const newTaskCheckbox = document.createElement("input")
         newTaskCheckbox.type = "checkbox"
@@ -52,7 +63,7 @@ const screenController = {
         newTask.appendChild(newTaskDescription)
 
         const deleteButton = document.createElement("button")
-        deleteButton.className = "deleteButton"
+        deleteButton.className = "taskDeleteButton"
         deleteButton.innerText = "x"
         newTask.appendChild(deleteButton)
 
@@ -65,15 +76,26 @@ const screenController = {
         return newTask
     },
     displayListName: function(listName) {
-        const listNameElement = document.querySelector(".listName")
+        const listNameElement = document.querySelector(".selectedListName")
         listNameElement.innerText = listName
-
     },
     addEventListenersToLists: function() {
-        const lists = document.getElementsByClassName("list")
+        const listNames = document.getElementsByClassName("listName")
 
-        for (const item of lists) {
-            item.addEventListener("click", (e) => coordinator.processListClick(e))
+        for (const item of listNames) {
+            item.addEventListener("click", (e) => {
+                const listID = e.path[1].id
+                coordinator.selectList(listID)
+            })
+        }
+
+        const listDeleteButtons = document.getElementsByClassName("listDeleteButton")
+
+        for (const deleteButton of listDeleteButtons) {
+            deleteButton.addEventListener("click", (e) => {
+                const listID = e.path[1].id
+                coordinator.deleteList(listID)
+            })
         }
     },
     addEventListenersToTasks: function() {
@@ -88,7 +110,7 @@ const screenController = {
             })
         }
 
-        const taskDeleteButtons = document.getElementsByClassName("deleteButton")
+        const taskDeleteButtons = document.getElementsByClassName("taskDeleteButton")
 
         for (const deleteButton of taskDeleteButtons) {
             deleteButton.addEventListener("click", (e) => {
@@ -170,10 +192,6 @@ const coordinator = {
 
         this.selectedListID = listID
     },
-    processListClick: function(e) {
-        const listID = e.srcElement.id
-        this.selectList(listID)
-    },
     processAddNewTaskField: function(input) {
         this.addNewTask(input, this.selectedListID, "10/10/1900")
         screenController.clearAddNewTaskField()
@@ -201,6 +219,18 @@ const coordinator = {
         const tasks = taskController.getTasks(this.selectedListID)
         screenController.displayTasks(tasks)
     },
+    deleteList: function(listID) {
+        taskController.deleteList(listID)
+        const lists = taskController.getLists()
+        screenController.displayLists(lists)
+        screenController.addEventListenersToLists()
+        if (listID == this.selectedListID) this.selectList(0)
+        else if (this.selectedListID < listID) this.selectList(this.selectedListID)
+        else if (this.selectedListID > listID) {
+            this.selectedListID--
+            this.selectList(this.selectedListID)
+        }
+    }
 
 
 }
@@ -255,6 +285,9 @@ const taskController = {
         const taskIndex = Number(taskID)
         return this.lists[selectedListID].tasks[taskIndex]
     },
+    getLists: function() {
+        return this.lists
+    },
     completeTask: function(task) {
         task.completed = true
     },
@@ -267,13 +300,25 @@ const taskController = {
         this.updateTaskIds(listID)
     },
     updateTaskIds: function(listID) {
-        console.log(this.lists[listID])
         let i = 0
-
         this.lists[listID].tasks.forEach((task) => {
             task.id = i++
         })
+    },
+
+    deleteList: function(listID) {
+        this.lists.splice(listID, 1)
+        this.updateListIds()
+    },
+    updateListIds: function() {
+        let i = 0
+        this.lists.forEach((list) => {
+            list.id = i++
+        })
     }
+
+
+
 }
 
 // Invocations
