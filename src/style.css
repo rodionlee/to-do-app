@@ -81,9 +81,7 @@ body {
     gap: 16px;
 }
 
-.listSelected {
-    background-color: rgba(255, 255, 165, 0.69);
-}
+
 
 .regularListsContainer {
     display: flex;
@@ -91,9 +89,17 @@ body {
     gap: 8px;
 }
 
-.list {
+.list, .listSelected {
     display: flex;
     justify-content: space-between;
+    align-items: center;
+    padding: 8px;
+    border-radius: 12px;
+    border: 1px solid white;
+}
+
+.listName {
+    flex: 1;
 }
 
 .listDeleteButton {
@@ -110,6 +116,18 @@ body {
 .list:hover .listDeleteButton {
     display: flex;
 }
+
+.list:hover {
+    background-color: rgba(170, 170, 170, 0.207);
+    border: 1px solid black;
+}
+
+.listSelected {
+    background-color: rgba(134, 134, 134, 0.69);
+    border: 1px solid black;
+}
+
+
 
 /* List Overview Column Container */
 

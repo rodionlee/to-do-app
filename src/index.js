@@ -126,11 +126,15 @@ const screenController = {
         
     },
     highlightSelectedList: function(listID) {
-        const lists = document.getElementsByClassName("list")
-        for (const list of lists) list.classList.remove("listSelected")
+        const previousSelectedList = document.querySelector(".listSelected")
+        if (previousSelectedList) {
+            previousSelectedList.classList.remove("listSelected")
+            previousSelectedList.classList.add("list")
+        }
 
         const list = document.getElementById(listID)
         list.classList.add("listSelected")
+        list.classList.remove("list")
     },
     addEventListenerToAddNewTaskField: function() {
         const addNewTaskName = document.getElementById("addNewTaskName")
