@@ -162,11 +162,29 @@ body {
 
 .task, .taskCompleted {
     display: flex;
+    align-items: center;
+
     gap: 16px;
+    padding: 8px;
+    border-radius: 12px;
+    border: 1px solid white;
 }
 
 .taskDescription {
     flex: 1;
+}
+
+.dueDateLabel {
+    
+}
+.dueDateInput {
+    visibility: hidden;
+    position: absolute;
+}
+
+.task:hover, .taskCompleted:hover {
+    background-color: rgba(196, 196, 196, 0.207);
+    border: 1px solid rgb(138, 138, 138);
 }
 
 .taskDeleteButton {
@@ -194,3 +212,4 @@ body {
     display: grid;
     grid-template-rows: 100px 1fr;
 }
+

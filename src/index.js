@@ -1,5 +1,6 @@
 import './style.css';
 import differenceInCalendarDays from 'date-fns/differenceInCalendarDays'
+import { daysInWeek, set } from 'date-fns';
 
 // Screen Controller
 
@@ -63,10 +64,9 @@ const screenController = {
         newTaskDescription.innerText = task.description
         newTask.appendChild(newTaskDescription)
 
-        const dueDate = document.createElement("p")
-        dueDate.className = "dueDate"
-        dueDate.innerText = this.processDueDateInRelationToToday(task.dueDate)
-        newTask.appendChild(dueDate)
+        newTask.appendChild(this.createDateLabelElementForTask(task))
+
+        newTask.appendChild(this.createDateInputElementForTask(task))
 
         const deleteButton = document.createElement("button")
         deleteButton.className = "taskDeleteButton"
@@ -81,6 +81,38 @@ const screenController = {
         }
         return newTask
     },
+    createDateLabelElementForTask(task) {
+        const dueDateLabel = document.createElement("label")
+        dueDateLabel.className = "dueDateLabel"
+        dueDateLabel.for = `dueDateInput${task.id}`
+        dueDateLabel.innerText = this.processDueDateInRelationToToday(task.dueDate)
+        dueDateLabel.addEventListener("click", () => {
+            const datepicker = document.getElementById(`dueDateInput${task.id}`)
+            datepicker.showPicker()
+        })
+        
+        return dueDateLabel
+    },
+    createDateInputElementForTask(task) {
+        const dueDateInput = document.createElement("input")
+        dueDateInput.type = "date"
+        dueDateInput.className = "dueDateInput"
+        dueDateInput.id = `dueDateInput${task.id}`
+        let setDateString = task.dueDate.getFullYear()
+        setDateString += "-"
+
+        if (task.dueDate.getMonth() < 8)
+            setDateString += "0" + (task.dueDate.getMonth() + 1)
+        else setDateString += task.dueDate.getMonth() + 1
+        setDateString += "-"
+
+        if (task.dueDate.getDate() < 10)
+            setDateString += "0" + task.dueDate.getDate()
+        else setDateString += task.dueDate.getDate()
+        
+        dueDateInput.value = setDateString
+        return dueDateInput
+    },
     processDueDateInRelationToToday(value) {
         const now = new Date()
         let dueDate = new Date(value)
@@ -88,10 +120,15 @@ const screenController = {
         const dayDifference = differenceInCalendarDays(dueDate, now)
         let returnDate
 
-        if (dayDifference < 1)
-            returnDate = "today"
+        if (dayDifference < 0)
+            returnDate = 
+                dueDate.getDate() + "/" +
+                (dueDate.getMonth() + 1) + "/" +
+                dueDate.getFullYear()
+        else if (dayDifference < 1)
+            returnDate = "Today"
         else if (dayDifference == 1)
-            returnDate = "tomorrow"
+            returnDate = "Tomorrow"
         else if (dayDifference < 7) {
             returnDate = dueDate.getDay()
 
@@ -118,13 +155,12 @@ const screenController = {
                     returnDate = "Sunday"
                     break
             }
-
         }
-        
+
         else if (dayDifference >= 7)
             returnDate = 
                 dueDate.getDate() + "/" +
-                dueDate.getMonth() + "/" +
+                (dueDate.getMonth() + 1) + "/" +
                 dueDate.getFullYear()
 
         return returnDate
@@ -223,15 +259,11 @@ const coordinator = {
     initialize: function() {
         this.addNewList("My List")
 
-        // this.addNewTask("Buy milk", 0, "23/11/2022")
-        // this.addNewTask("Buy bananas", 0, "23/11/2022")
-        // this.addNewTask("Buy bread", 0, "23/11/2022")
+        this.addNewTask("Buy milk", 0, new Date())
+        this.addNewTask("Buy bananas", 0, new Date("12/20/2022"))
+        this.addNewTask("Buy bread", 0, new Date("08/11/2022"))
 
         this.addNewList("My List 2")
-
-        // this.addNewTask("Buy milk 2", 1, "23/11/2022")
-        // this.addNewTask("Buy bananas 2", 1, "23/11/2022")
-        // this.addNewTask("Buy bread 2", 1, "23/11/2022")
 
         this.selectList(this.selectedListID)
 
@@ -320,7 +352,7 @@ const taskController = {
         constructor(description, listID, dueDate) {
             this.description = description
             this.listID = listID
-            this.dueDate = dueDate
+            this.dueDate = new Date(dueDate)
         }
     },
 
@@ -332,6 +364,7 @@ const taskController = {
     },
     addNewTask: function(task, listID, dueDate) {
         const newTask = new this.taskClass(task, listID, dueDate)
+        // newTask.dueDate = new Date("2018-01-01")
         this.lists[listID].tasks.push(newTask)
         newTask.id = `${this.lists[listID].tasks.indexOf(newTask)}`
         return this.lists[listID].tasks
@@ -371,7 +404,6 @@ const taskController = {
             task.id = i++
         })
     },
-
     deleteList: function(listID) {
         this.lists.splice(listID, 1)
         this.updateListIds()
@@ -382,10 +414,6 @@ const taskController = {
             list.id = i++
         })
     },
-    
-
-
-
 }
 
 // Invocations
