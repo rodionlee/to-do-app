@@ -1,4 +1,5 @@
 import './style.css';
+import differenceInCalendarDays from 'date-fns/differenceInCalendarDays'
 
 // Screen Controller
 
@@ -64,7 +65,7 @@ const screenController = {
 
         const dueDate = document.createElement("p")
         dueDate.className = "dueDate"
-        dueDate.innerText = task.dueDate
+        dueDate.innerText = this.processDueDateInRelationToToday(task.dueDate)
         newTask.appendChild(dueDate)
 
         const deleteButton = document.createElement("button")
@@ -79,6 +80,54 @@ const screenController = {
             newTask.className = "taskCompleted"
         }
         return newTask
+    },
+    processDueDateInRelationToToday(value) {
+        const now = new Date()
+        let dueDate = new Date(value)
+
+        const dayDifference = differenceInCalendarDays(dueDate, now)
+        let returnDate
+
+        if (dayDifference < 1)
+            returnDate = "today"
+        else if (dayDifference == 1)
+            returnDate = "tomorrow"
+        else if (dayDifference < 7) {
+            returnDate = dueDate.getDay()
+
+            switch (returnDate) {
+                case 1: 
+                    returnDate = "Monday"
+                    break
+                case 2: 
+                    returnDate = "Tuesday"
+                    break
+                case 3: 
+                    returnDate = "Wednesday"
+                    break
+                case 4: 
+                    returnDate = "Thursday"
+                    break
+                case 5: 
+                    returnDate = "Friday"
+                    break
+                case 6: 
+                    returnDate = "Saturday"
+                    break
+                case 0: 
+                    returnDate = "Sunday"
+                    break
+            }
+
+        }
+        
+        else if (dayDifference >= 7)
+            returnDate = 
+                dueDate.getDate() + "/" +
+                dueDate.getMonth() + "/" +
+                dueDate.getFullYear()
+
+        return returnDate
     },
     displayListName: function(listName) {
         const listNameElement = document.querySelector(".selectedListName")
@@ -138,11 +187,13 @@ const screenController = {
     },
     addEventListenerToAddNewTaskField: function() {
         const addNewTaskName = document.getElementById("addNewTaskName")
+
         const addNewTaskDate = document.getElementById("addNewTaskDate")
         addNewTaskName.addEventListener("keyup", (key) => {
             if (key.code === "Enter") coordinator.processAddNewTaskField(addNewTaskName.value, addNewTaskDate.value)
         })
         addNewTaskDate.addEventListener("input", () => {
+            if (addNewTaskName.value)
             coordinator.processAddNewTaskField(addNewTaskName.value, addNewTaskDate.value)
         })
     },
@@ -172,9 +223,9 @@ const coordinator = {
     initialize: function() {
         this.addNewList("My List")
 
-        this.addNewTask("Buy milk", 0, "23/11/2022")
-        this.addNewTask("Buy bananas", 0, "23/11/2022")
-        this.addNewTask("Buy bread", 0, "23/11/2022")
+        // this.addNewTask("Buy milk", 0, "23/11/2022")
+        // this.addNewTask("Buy bananas", 0, "23/11/2022")
+        // this.addNewTask("Buy bread", 0, "23/11/2022")
 
         this.addNewList("My List 2")
 
@@ -340,3 +391,7 @@ const taskController = {
 // Invocations
 
 coordinator.initialize()
+
+
+
+
