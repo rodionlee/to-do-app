@@ -9,7 +9,7 @@
 
 
 :root {
-    --listNameHeight: 50px;
+    --rowHeight: 50px;
 }
 
 /* Typography */
@@ -57,27 +57,26 @@ body {
     box-shadow: 5px 5px 15px 5px grey;
 
     display: grid;
-    /* grid-template-columns: 1fr 1fr 1fr; */
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: 1fr 1fr 1fr;
     grid-template-rows: 1fr;
 }
 
 .inputField {
     width: 100%;
-    height: var(--listNameHeight);
+    height: var(--rowHeight);
     padding: 8px;
 }
 
-.listsColumnContainer, .listOverviewColumnContainer, .listsColumnContainer {
+.listsContainer, .tasksContainer, .taskDetailsContainer {
     padding: 16px;
 }
 
-/* Lists Column Container */
+/* Lists Container */
 
-.listsColumnContainer {
+.listsContainer {
     display: grid;
     grid-template-columns: 1fr;
-    grid-template-rows: var(--listNameHeight) 1fr var(--listNameHeight) var(--listNameHeight) 2fr;
+    grid-template-rows: var(--rowHeight) 1fr var(--rowHeight) var(--rowHeight) 2fr;
     gap: 16px;
 }
 
@@ -129,11 +128,11 @@ body {
 
 
 
-/* List Overview Column Container */
+/* Tasks Container */
 
-.listOverviewColumnContainer {
+.tasksContainer {
     display: grid;
-    grid-template-rows: var(--listNameHeight) var(--listNameHeight) 1fr;
+    grid-template-rows: var(--rowHeight) var(--rowHeight) 1fr;
     grid-template-columns: 4fr 1fr;
     border-left: 1px solid black;
     border-right: 1px solid black;
@@ -154,32 +153,52 @@ body {
 
 .tasksUncompletedContainer {
     grid-column: 1 / 3;
+    display: flex;
+    flex-wrap: wrap;
+    align-content: flex-start;
+    gap: 8px;
 }
 
 .tasksCompletedContainer {
     grid-column: 1 / 3;
+    display: flex;
+    flex-wrap: wrap;
+    align-content: flex-start;
+    gap: 8px;
 }
 
-.task, .taskCompleted {
+.task, .taskCompleted, .taskSelected {
+    flex: 1;
     display: flex;
     align-items: center;
-
-    gap: 16px;
-    padding: 8px;
+    height: var(--rowHeight);
+    padding: 0 8px;
+    gap: 8px;
     border-radius: 12px;
     border: 1px solid white;
 }
 
+.task .checkbox {
+    height: 100%;
+}
+
 .taskDescription {
     flex: 1;
+    display: flex;
+    align-items: center;
+    height: 100%;
 }
 
 .dueDateLabel {
-    
+    display: flex;
+    align-items: center;
+    height: 100%;
 }
+
 .dueDateInput {
     visibility: hidden;
     position: absolute;
+    right: 10vw;
 }
 
 .task:hover, .taskCompleted:hover {
@@ -206,10 +225,21 @@ body {
     text-decoration: line-through;
 }
 
-/* Task Column Container */
+.tasksUncompletedContainer .taskSelected {
+    background-color: rgba(134, 134, 134, 0.69);
+    border: 1px solid black;
+}
 
-.taskColumnContainer {
+
+
+
+
+ 
+/* Task Details Container */
+
+.taskDetailsContainer {
     display: grid;
-    grid-template-rows: 100px 1fr;
+    grid-template-columns: 1fr;
+    grid-template-rows: var(--rowHeight) var(--rowHeight 1fr);
 }
 
