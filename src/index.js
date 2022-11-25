@@ -1,6 +1,6 @@
 import './style.css';
 import differenceInCalendarDays from 'date-fns/differenceInCalendarDays'
-import { daysInWeek, set } from 'date-fns';
+import { addMinutes, daysInWeek, set } from 'date-fns';
 // import { debug } from 'webpack';
 
 // Screen Controller
@@ -9,6 +9,7 @@ const screenController = {
 
     updateScreen: function(lists, selectedListID, selectedTaskID, highLightTask) {
         this.displayLists(lists)
+
         this.displayTasks(lists[selectedListID].tasks)
         this.displayListName(lists[selectedListID].name)
         
@@ -23,18 +24,25 @@ const screenController = {
             }
         } else this.clearTaskDetails()
 
+
         this.addEventListenersToLists()
         this.addEventListenersToTasks()
+        this.addEventListenerToAddNewListField()
+        this.addEventListenerToAddNewTaskField()
+
+
     },
     displayLists: function(lists) {
-        const regularLists = document.querySelector(".regularListsContainer")
-        regularLists.innerHTML = ""
+        const regularListsContainer = document.querySelector(".regularListsContainer")
+        regularListsContainer.innerHTML = ""
 
         for (const list of lists) {
             const newList = this.createListElement(list.name)
             newList.id = lists.indexOf(list)
-            regularLists.appendChild(newList)
+            regularListsContainer.appendChild(newList)
         }
+
+        regularListsContainer.appendChild(this.createAddList())
     }, 
     createListElement: function(listName) {
         const newList = document.createElement("div")
@@ -52,6 +60,14 @@ const screenController = {
 
         return newList
     },
+    createAddList() {
+        const addListField = document.createElement("input")
+        addListField.type = "text"
+        addListField.id = "addNewListField"
+        addListField.className = "inputField"
+        addListField.placeholder = "+ Add List"
+        return addListField
+    },
     displayTasks: function(tasks) {
         const tasksUncompletedContainer = document.querySelector(".tasksUncompletedContainer")
         tasksUncompletedContainer.innerHTML = ""
@@ -68,6 +84,11 @@ const screenController = {
             }
 
         }
+
+        tasksUncompletedContainer.appendChild(this.createAddTaskFieldName())
+        tasksUncompletedContainer.appendChild(this.createAddTaskDueDateInput())
+        tasksUncompletedContainer.appendChild(this.createAddTaskDueDateLabel())
+
         
     },
     displayTask: function(task, tasks) {
@@ -136,7 +157,7 @@ const screenController = {
         dueDateLabel.for = `dueDateInput${task.id}`
         
         if (new Date(task.dueDate).toString() != "Invalid Date") dueDateLabel.innerText = this.processDueDateInRelationToToday(task.dueDate)
-        else dueDateLabel.innerText = "Due Date"
+        else dueDateLabel.innerText = "No Date"
 
         dueDateLabel.addEventListener("click", () => {
             const datepicker = document.getElementById(`dueDateInput${task.id}`)
@@ -216,6 +237,35 @@ const screenController = {
                 dueDate.getFullYear()
 
         return returnDate
+    },
+    createAddTaskFieldName() {
+        const addTaskField = document.createElement("input")
+        addTaskField.type = "text"
+        addTaskField.id = "addNewTaskName"
+        addTaskField.className = "inputField"
+        addTaskField.placeholder = "+ Add Task"
+        return addTaskField
+    },
+    createAddTaskDueDateInput() {
+        const addTaskDueDateInput = document.createElement("input")
+        addTaskDueDateInput.type = "date"
+        addTaskDueDateInput.id = "addNewTaskDate"
+        addTaskDueDateInput.className = "addTaskDueDateInput"
+        return addTaskDueDateInput
+    },
+    createAddTaskDueDateLabel() {
+        const addTaskDueDateLabel = document.createElement("label")
+        addTaskDueDateLabel.className = "addTaskDueDateLabel"
+        addTaskDueDateLabel.for = `addNewTaskDate`
+
+        addTaskDueDateLabel.innerText = "Select Date"
+        
+        addTaskDueDateLabel.addEventListener("click", () => {
+            const datepicker = document.getElementById(`addNewTaskDate`)
+            datepicker.showPicker()
+        })
+        
+        return addTaskDueDateLabel
     },
     displayListName: function(listName) {
         const listNameElement = document.querySelector(".selectedListName")
@@ -325,11 +375,15 @@ const screenController = {
         addNewTaskDate.addEventListener("input", () => {
             if (addNewTaskName.value)
             coordinator.processAddNewTaskField(addNewTaskName.value, addNewTaskDate.value)
+            
+            const addTaskDueDateLabel = document.querySelector(".addTaskDueDateLabel")
+            addTaskDueDateLabel.innerText = this.processDueDateInRelationToToday(addNewTaskDate.value)
         })
     },
     addEventListenerToAddNewListField: function() {
         const addNewListField = document.getElementById("addNewListField")
         addNewListField.addEventListener("keyup", (key) => {
+            console.log("123")
             if (key.code === "Enter") coordinator.processAddNewListField(addNewListField.value)
         })
     },
@@ -384,6 +438,10 @@ const screenController = {
         const addNewListField = document.getElementById("addNewListField")
         addNewListField.value = ""
     },
+    addEventListenerToListsToggle() {
+        const listsToggle = document.querySelector(".listsToggle")
+        listsToggle.addEventListener("click", () => console.log("123"))
+    }
 }
 
 // Coordinator
@@ -412,9 +470,8 @@ const coordinator = {
         this.addNewTask("Milk 🥛", 1, today)
         this.addNewTask("Apples 🍏", 1, today)
 
-        screenController.addEventListenerToAddNewTaskField()
-        screenController.addEventListenerToAddNewListField()
         screenController.addEventListenersToTaskDetails()
+        screenController.addEventListenerToListsToggle()
     },
     updateScreen(highLightTask) {
 
@@ -559,11 +616,11 @@ const taskController = {
     getTasks: function(listID) {
         return this.lists[listID].tasks
     },
-    // getListID: function(listName) {
-    //     for (const list of this.lists) {
-    //         if (list.name === listName) return list.id
-    //     }
-    // },
+    getListID: function(listName) {
+        for (const list of this.lists) {
+            if (list.name === listName) return list.id
+        }
+    },
     // getListName: function(listID) {
     //     return this.lists[listID].name
     // },
