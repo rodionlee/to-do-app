@@ -2,12 +2,6 @@ import './style.css';
 import differenceInCalendarDays from 'date-fns/differenceInCalendarDays'
 import { addMinutes, daysInWeek, set } from 'date-fns';
 import 'material-icons/iconfont/material-icons.css';
-import '@fontsource/roboto/300.css';
-import '@fontsource/roboto/400.css';
-import '@fontsource/roboto/500.css';
-import '@fontsource/roboto/700.css';
-
-
 // import { debug } from 'webpack';
 
 // Screen Controller
@@ -48,34 +42,8 @@ const screenController = {
             newList.id = lists.indexOf(list)
             regularListsContainer.appendChild(newList)
         }
-
         regularListsContainer.appendChild(this.createAddList())
     }, 
-    createListElement: function(listName) {
-        const newList = document.createElement("div")
-        newList.className = "list"
-
-        const newListName = document.createElement("p")
-        newListName.innerText = listName
-        newListName.className = "listName"
-        newList.appendChild(newListName)
-
-        const deleteButton = document.createElement("button")
-        deleteButton.className = "listDeleteButton"
-        // deleteButton.innerText = "x"
-        // deleteButton.innerHTML = "<span class=`material-icons`>pie_chart</span>"
-        newList.appendChild(deleteButton)
-
-        return newList
-    },
-    createAddList() {
-        const addListField = document.createElement("input")
-        addListField.type = "text"
-        addListField.id = "addNewListField"
-        addListField.className = "inputField"
-        addListField.placeholder = "+ Add List"
-        return addListField
-    },
     displayTasks: function(tasks) {
         const tasksUncompletedContainer = document.querySelector(".tasksUncompletedContainer")
         tasksUncompletedContainer.innerHTML = ""
@@ -96,8 +64,6 @@ const screenController = {
         tasksUncompletedContainer.appendChild(this.createAddTaskFieldName())
         tasksUncompletedContainer.appendChild(this.createAddTaskDueDateInput())
         tasksUncompletedContainer.appendChild(this.createAddTaskDueDateLabel())
-
-        
     },
     displayTask: function(task, tasks) {
         const taskName = document.querySelector(".taskDetailsContainer .taskName")
@@ -116,16 +82,17 @@ const screenController = {
         }
         else taskDescription.value = ""
     },
-    clearTaskDetails: function() {
-        const taskName = document.querySelector(".taskDetailsContainer .taskName")
-        taskName.value = ""
-        
-        const dueDateLabel = document.querySelector(".taskDetailsContainer .dueDateLabel")
-        dueDateLabel.innerText = ""
-
-        const taskDescription = document.querySelector(".taskDetailsContainer .taskDescription")
-        taskDescription.value = ""
-        taskDescription.classList.remove("taskDescriptionActive")
+    displayListName: function(listName) {
+        const listNameElement = document.querySelector(".selectedListName")
+        listNameElement.innerText = listName
+    },
+    createAddList() {
+        const addListField = document.createElement("input")
+        addListField.type = "text"
+        addListField.id = "addNewListField"
+        addListField.className = "inputField"
+        addListField.placeholder = "+ Add List"
+        return addListField
     },
     createTaskElement: function(task) {
         const newTask = document.createElement("div")
@@ -146,9 +113,10 @@ const screenController = {
 
         newTask.appendChild(this.createDateInputElementForTask(task))
 
-        const deleteButton = document.createElement("button")
+        const deleteButton = document.createElement("div")
         deleteButton.className = "taskDeleteButton"
-        deleteButton.innerText = "x"
+        deleteButton.appendChild(this.createIcon("delete_outline"))
+
         newTask.appendChild(deleteButton)
 
         if (task.completed == false) {
@@ -159,13 +127,29 @@ const screenController = {
         }
         return newTask
     },
+    createListElement: function(listName) {
+        const newList = document.createElement("div")
+        newList.className = "list"
+
+        const newListName = document.createElement("p")
+        newListName.innerText = listName
+        newListName.className = "listName"
+        newList.appendChild(newListName)
+
+        const deleteButton = document.createElement("div")
+        deleteButton.className = "listDeleteButton"
+        deleteButton.appendChild(this.createIcon("delete_outline"))
+        newList.appendChild(deleteButton)
+
+        return newList
+    },
     createDateLabelElementForTask(task) {
         const dueDateLabel = document.createElement("label")
         dueDateLabel.className = "dueDateLabel"
         dueDateLabel.for = `dueDateInput${task.id}`
         
         if (new Date(task.dueDate).toString() != "Invalid Date") dueDateLabel.innerText = this.processDueDateInRelationToToday(task.dueDate)
-        else dueDateLabel.innerHTML = "No Date"
+        else dueDateLabel.appendChild(this.createIcon("calendar_today"))
 
         dueDateLabel.addEventListener("click", () => {
             const datepicker = document.getElementById(`dueDateInput${task.id}`)
@@ -193,6 +177,42 @@ const screenController = {
         
         dueDateInput.value = setDateString
         return dueDateInput
+    },
+    createAddTaskFieldName() {
+        const addTaskField = document.createElement("input")
+        addTaskField.type = "text"
+        addTaskField.id = "addNewTaskName"
+        addTaskField.className = "inputField"
+        addTaskField.placeholder = "+ Add Task"
+        return addTaskField
+    },
+    createAddTaskDueDateInput() {
+        const addTaskDueDateInput = document.createElement("input")
+        addTaskDueDateInput.type = "date"
+        addTaskDueDateInput.id = "addNewTaskDate"
+        addTaskDueDateInput.className = "addTaskDueDateInput"
+        return addTaskDueDateInput
+    },
+    createAddTaskDueDateLabel() {
+        const addTaskDueDateLabel = document.createElement("label")
+        addTaskDueDateLabel.className = "addTaskDueDateLabel"
+        addTaskDueDateLabel.for = `addNewTaskDate`
+        addTaskDueDateLabel.innerHTML = ""
+
+        addTaskDueDateLabel.appendChild(this.createIcon("calendar_today"))
+        
+        addTaskDueDateLabel.addEventListener("click", () => {
+            const datepicker = document.getElementById(`addNewTaskDate`)
+            datepicker.showPicker()
+        })
+        
+        return addTaskDueDateLabel
+    },
+    createIcon(name) {
+        const icon = document.createElement("span")
+        icon.className = "material-icons-round"
+        icon.innerHTML = name
+        return icon
     },
     processDueDateInRelationToToday(value) {
         const now = new Date()
@@ -245,39 +265,6 @@ const screenController = {
                 dueDate.getFullYear()
 
         return returnDate
-    },
-    createAddTaskFieldName() {
-        const addTaskField = document.createElement("input")
-        addTaskField.type = "text"
-        addTaskField.id = "addNewTaskName"
-        addTaskField.className = "inputField"
-        addTaskField.placeholder = "+ Add Task"
-        return addTaskField
-    },
-    createAddTaskDueDateInput() {
-        const addTaskDueDateInput = document.createElement("input")
-        addTaskDueDateInput.type = "date"
-        addTaskDueDateInput.id = "addNewTaskDate"
-        addTaskDueDateInput.className = "addTaskDueDateInput"
-        return addTaskDueDateInput
-    },
-    createAddTaskDueDateLabel() {
-        const addTaskDueDateLabel = document.createElement("label")
-        addTaskDueDateLabel.className = "addTaskDueDateLabel"
-        addTaskDueDateLabel.for = `addNewTaskDate`
-
-        addTaskDueDateLabel.innerText = "Select Date"
-        
-        addTaskDueDateLabel.addEventListener("click", () => {
-            const datepicker = document.getElementById(`addNewTaskDate`)
-            datepicker.showPicker()
-        })
-        
-        return addTaskDueDateLabel
-    },
-    displayListName: function(listName) {
-        const listNameElement = document.querySelector(".selectedListName")
-        listNameElement.innerText = listName
     },
     addEventListenersToLists: function() {
         const listNames = document.getElementsByClassName("listName")
@@ -348,44 +335,20 @@ const screenController = {
         }
         
     },
-    highlightSelectedList: function(listID) {
-        const previousSelectedList = document.querySelector(".listSelected")
-        if (previousSelectedList) {
-            previousSelectedList.classList.remove("listSelected")
-            previousSelectedList.classList.add("list")
-        }
-
-        const list = document.getElementById(listID)
-        list.classList.add("listSelected")
-        list.classList.remove("list")
-    },
-    highlightSelectedTask: function(taskID) {
-        if (taskID) {
-
-            const previousSelectedTask = document.querySelector(".tasksUncompletedContainer .taskSelected")
-            if (previousSelectedTask) {
-                previousSelectedTask.classList.remove("taskSelected")
-                previousSelectedTask.classList.add("task")
-            }
-            
-            const task = document.querySelector(`#${taskID}`)
-            task.classList.add("taskSelected")
-            task.classList.remove("task")
-        }
-    },
     addEventListenerToAddNewTaskField: function() {
         const addNewTaskName = document.getElementById("addNewTaskName")
 
         const addNewTaskDate = document.getElementById("addNewTaskDate")
+
         addNewTaskName.addEventListener("keyup", (key) => {
-            if (key.code === "Enter") coordinator.processAddNewTaskField(addNewTaskName.value, addNewTaskDate.value)
+            if (key.code === "Enter") 
+                coordinator.processAddNewTaskField(addNewTaskName.value, addNewTaskDate.value)
         })
         addNewTaskDate.addEventListener("input", () => {
-            if (addNewTaskName.value)
-            coordinator.processAddNewTaskField(addNewTaskName.value, addNewTaskDate.value)
-            
             const addTaskDueDateLabel = document.querySelector(".addTaskDueDateLabel")
             addTaskDueDateLabel.innerText = this.processDueDateInRelationToToday(addNewTaskDate.value)
+            if (addNewTaskName.value)
+                coordinator.processAddNewTaskField(addNewTaskName.value, addNewTaskDate.value)
         })
     },
     addEventListenerToAddNewListField: function() {
@@ -436,6 +399,35 @@ const screenController = {
             coordinator.updateTask(updatedTask)
         })
     },
+    highlightSelectedList: function(listID) {
+        const previousSelectedList = document.querySelector(".listSelected")
+        if (previousSelectedList) {
+            previousSelectedList.classList.remove("listSelected")
+            previousSelectedList.classList.add("list")
+        }
+
+        const list = document.getElementById(listID)
+        list.classList.add("listSelected")
+        list.classList.remove("list")
+    },
+    highlightSelectedTask: function(taskID) {
+        if (taskID) {
+
+            const previousSelectedTask = document.querySelector(".tasksUncompletedContainer .taskSelected")
+            if (previousSelectedTask) {
+                previousSelectedTask.classList.remove("taskSelected")
+                previousSelectedTask.classList.add("task")
+            }
+            
+            const task = document.querySelector(`#${taskID}`)
+            task.classList.add("taskSelected")
+            task.classList.remove("task")
+        }
+    },
+    addEventListenerToListsToggle() {
+        const listsToggle = document.querySelector(".listsToggle")
+        listsToggle.addEventListener("click", () => console.log("123"))
+    },
     clearAddNewTask: function() {
         const addNewTaskName = document.getElementById("addNewTaskName")
         addNewTaskName.value = ""
@@ -446,16 +438,19 @@ const screenController = {
         const addNewListField = document.getElementById("addNewListField")
         addNewListField.value = ""
     },
-    addEventListenerToListsToggle() {
-        const listsToggle = document.querySelector(".listsToggle")
-        listsToggle.addEventListener("click", () => console.log("123"))
+    clearTaskDetails: function() {
+        const taskName = document.querySelector(".taskDetailsContainer .taskName")
+        taskName.value = ""
+        
+        const dueDateLabel = document.querySelector(".taskDetailsContainer .dueDateLabel")
+        dueDateLabel.innerText = ""
+
+        const taskDescription = document.querySelector(".taskDetailsContainer .taskDescription")
+        taskDescription.value = ""
+        taskDescription.classList.remove("taskDescriptionActive")
     },
-    createIcon(name) {
-        const icon = document.createElement("span")
-        icon.className = "material-icons-round"
-        icon.innerHTML = name
-        return icon
-    }
+
+
 }
 
 // Coordinator
