@@ -10,8 +10,8 @@ const screenController = {
     updateScreen: function(lists, selectedListID, selectedTaskID, highLightTask) {
         this.displayLists(lists)
         this.displayTasks(lists[selectedListID].tasks)
+        this.displayListName(lists[selectedListID].name)
         
-
         this.highlightSelectedList(selectedListID)
 
         if (highLightTask) {
@@ -81,6 +81,7 @@ const screenController = {
         else dueDateLabel.innerText = "Select Date"
 
         const taskDescription = document.querySelector(".taskDetailsContainer .taskDescription")
+        taskDescription.classList.add("taskDescriptionActive")
         if (task.description) {
             taskDescription.value = task.description
         }
@@ -95,6 +96,7 @@ const screenController = {
 
         const taskDescription = document.querySelector(".taskDetailsContainer .taskDescription")
         taskDescription.value = ""
+        taskDescription.classList.remove("taskDescriptionActive")
     },
     createTaskElement: function(task) {
         const newTask = document.createElement("div")
@@ -392,11 +394,23 @@ const coordinator = {
     initialize: function() {
         this.addNewList("My List")
 
-        this.addNewTask("Buy milk", 0, new Date())
-        this.addNewTask("Buy bananas", 0, new Date("12/20/2022"))
-        this.addNewTask("Buy bread", 0, new Date("08/11/2022"))
+        const today = new Date()
+        const tomorrow = new Date().setDate(today.getDate() + 1)
+        const in3Days = new Date().setDate(today.getDate() + 3)
+        const in10Days = new Date().setDate(today.getDate() + 10)
+
+        this.addNewTask("Meditate", 0, today)
+        this.addNewTask("Dental Appointment", 0, tomorrow)
+        taskController.getTask(1, 0).description = 
+            "Eat 2-3 hours before the appointment to reduce salivation. Don't forget to brush your teeth"
+        this.addNewTask("Interview", 0, in3Days)
+        this.addNewTask("Hiking with friends", 0, in10Days)
         
-        this.addNewList("My List 2")
+        this.addNewList("Groceries 🥑")
+
+        this.addNewTask("Bread 🥖", 1, today)
+        this.addNewTask("Milk 🥛", 1, today)
+        this.addNewTask("Apples 🍏", 1, today)
 
         screenController.addEventListenerToAddNewTaskField()
         screenController.addEventListenerToAddNewListField()
@@ -496,19 +510,6 @@ const coordinator = {
 
         this.selectTask(this.selectedTaskID) 
     },
-    updateTaskName: function(taskID, newName) {
-        // console.log(taskID)
-        // console.log(newName)
-        taskController.updateTaskName(taskID, this.selectedListID, newName)
-
-        this.updateScreen(true)
-
-        // const tasks = taskController.getTasks(this.selectedListID)
-        // screenController.displayNames(tasks)
-
-        // this.selectTask(this.selectedTaskID) 
-    },
-
     updateTask(newTask) {
         taskController.updateTask(newTask, this.selectedListID, this.convertDOMTaskIDtoTaskIndex(this.selectedTaskID))
         this.updateScreen(true)
@@ -558,14 +559,14 @@ const taskController = {
     getTasks: function(listID) {
         return this.lists[listID].tasks
     },
-    getListID: function(listName) {
-        for (const list of this.lists) {
-            if (list.name === listName) return list.id
-        }
-    },
-    getListName: function(listID) {
-        return this.lists[listID].name
-    },
+    // getListID: function(listName) {
+    //     for (const list of this.lists) {
+    //         if (list.name === listName) return list.id
+    //     }
+    // },
+    // getListName: function(listID) {
+    //     return this.lists[listID].name
+    // },
     getTask: function(taskID, selectedListID) {
         const taskIndex = Number(taskID)
         return this.lists[selectedListID].tasks[taskIndex]
@@ -604,22 +605,12 @@ const taskController = {
         const task = this.getTask(taskID, selectedListID)
         task.dueDate = new Date(newDate)
     },
-    updateTaskName: function(taskID, listID, newName) {
-        const task = this.getTask(taskID, listID)
-        task.name = newName
-    },
     updateTask: function (newTask, listID, taskID) {
         const task = this.getTask(taskID, listID)
         if (newTask.name) task.name = newTask.name
         if (newTask.dueDate) task.dueDate = newTask.dueDate
         if (newTask.description) task.description = newTask.description
     },
-    // debug() {
-    //     console.log("Lists:")
-    //     console.log(this.lists)
-    //     console.log("Tasks of List 0:")
-    //     console.log(this.lists[0].tasks)
-    // }
 }
 
 
@@ -627,5 +618,3 @@ const taskController = {
 
 coordinator.initialize()
 
-// setTimeout(taskController.debug, 1000)
-// setTimeout(taskController.debug, 5000)

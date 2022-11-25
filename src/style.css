@@ -10,6 +10,17 @@
 
 :root {
     --rowHeight: 50px;
+
+    --hover-transition: 0.3s;
+    --hover-background-color: rgba(196, 196, 196, 0.207);
+    --hover-border: 1px solid rgb(138, 138, 138);
+
+    --hover: background-color: rgba(196, 196, 196, 0.207);
+
+    --selected-background-color: rgba(84, 84, 84, 0.207);
+    --selected-border: 1px solid rgb(79, 79, 79);
+
+
 }
 
 /* Typography */
@@ -36,7 +47,7 @@ h3 {
     align-items: center;
 }
 
-p, li, ul, ::placeholder, a, span {
+p, li, ul, ::placeholder, a, span, textarea, input, label {
     font-size: 18px;
     line-height: 1.5;
 }
@@ -78,11 +89,9 @@ body {
 .listsContainer {
     display: grid;
     grid-template-columns: 1fr;
-    grid-template-rows: var(--rowHeight) 1fr var(--rowHeight) var(--rowHeight) 2fr;
+    grid-template-rows: var(--rowHeight) var(--rowHeight) 1fr;
     gap: 16px;
 }
-
-
 
 .regularListsContainer {
     display: flex;
@@ -97,6 +106,7 @@ body {
     padding: 8px;
     border-radius: 12px;
     border: 1px solid white;
+    transition: var(--hover-transition);
 }
 
 .listName {
@@ -119,13 +129,14 @@ body {
 }
 
 .list:hover {
-    background-color: rgba(196, 196, 196, 0.207);
-    border: 1px solid rgb(138, 138, 138);
+    background-color: var(--hover-background-color);
+    border: var(--hover-border);
+    transition: var(--hover-transition);
 }
 
 .listSelected {
-    background-color: rgba(134, 134, 134, 0.69);
-    border: 1px solid black;
+    background-color: var(--selected-background-color);
+    border: var(--selected-border);
 }
 
 
@@ -205,8 +216,9 @@ body {
 }
 
 .task:hover, .taskCompleted:hover {
-    background-color: rgba(196, 196, 196, 0.207);
-    border: 1px solid rgb(138, 138, 138);
+    background-color: var(--hover-background-color);
+    border: var(--hover-border);
+    transition: var(--hover-transition);
 }
 
 .taskDeleteButton {
@@ -232,8 +244,8 @@ body {
 }
 
 .tasksUncompletedContainer .taskSelected {
-    background-color: rgba(134, 134, 134, 0.69);
-    border: 1px solid black;
+    background-color: var(--selected-background-color);
+    border: var(--selected-border)
 }
 
 
@@ -257,7 +269,26 @@ body {
     line-height: 1;
     font-weight: 700;
     color: grey;
+
     display: flex;
     align-items: center;
+
+    width: 100%;
+
+    border: none;
 }
+
+.taskDetailsContainer .taskDescription,
+.taskDetailsContainer .taskDescriptionActive
+{
+    border: none;
+    resize: none;
+    transition: border 0.3s;
+    padding: 8px;
+}
+
+.taskDetailsContainer .taskDescriptionActive {
+    border: 1px solid black;
+}
+
 
