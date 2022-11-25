@@ -1,6 +1,13 @@
 import './style.css';
 import differenceInCalendarDays from 'date-fns/differenceInCalendarDays'
 import { addMinutes, daysInWeek, set } from 'date-fns';
+import 'material-icons/iconfont/material-icons.css';
+import '@fontsource/roboto/300.css';
+import '@fontsource/roboto/400.css';
+import '@fontsource/roboto/500.css';
+import '@fontsource/roboto/700.css';
+
+
 // import { debug } from 'webpack';
 
 // Screen Controller
@@ -55,7 +62,8 @@ const screenController = {
 
         const deleteButton = document.createElement("button")
         deleteButton.className = "listDeleteButton"
-        deleteButton.innerText = "x"
+        // deleteButton.innerText = "x"
+        // deleteButton.innerHTML = "<span class=`material-icons`>pie_chart</span>"
         newList.appendChild(deleteButton)
 
         return newList
@@ -157,7 +165,7 @@ const screenController = {
         dueDateLabel.for = `dueDateInput${task.id}`
         
         if (new Date(task.dueDate).toString() != "Invalid Date") dueDateLabel.innerText = this.processDueDateInRelationToToday(task.dueDate)
-        else dueDateLabel.innerText = "No Date"
+        else dueDateLabel.innerHTML = "No Date"
 
         dueDateLabel.addEventListener("click", () => {
             const datepicker = document.getElementById(`dueDateInput${task.id}`)
@@ -441,6 +449,12 @@ const screenController = {
     addEventListenerToListsToggle() {
         const listsToggle = document.querySelector(".listsToggle")
         listsToggle.addEventListener("click", () => console.log("123"))
+    },
+    createIcon(name) {
+        const icon = document.createElement("span")
+        icon.className = "material-icons-round"
+        icon.innerHTML = name
+        return icon
     }
 }
 
@@ -674,4 +688,3 @@ const taskController = {
 // Invocations
 
 coordinator.initialize()
-

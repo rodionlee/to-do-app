@@ -8,26 +8,25 @@
 <script defer src="runtime.bundle.js"></script><script defer src="index.bundle.js"></script></head>
 <body>
 
+    <header>
+        <div class="listsToggle"></div>
+        <h1>Rodion's List</h1>
+        <div class="themeToggle"></div>
+
+    </header>
+
     <div class="mainContainer">
 
         <div class="listsContainer">
-            
-            <h3>Smart Lists</h3>
-            <div class="smartListsContainer"></div>
 
             <h3>Lists</h3>
-            <input type="text" id = "addNewListField" class="inputField" placeholder="Add New List">
             <div class="regularListsContainer"></div>
-
+            
         </div>
 
         <div class="tasksContainer">
 
             <h3 class="selectedListName"></h3>
-
-            <input type="text" id="addNewTaskName" class="inputField" placeholder="Add New Task">
-            <input type="date" id="addNewTaskDate" class="inputField">
-
             <div class="tasksUncompletedContainer"></div>
             <div class="tasksCompletedContainer"></div>
 
@@ -41,6 +40,16 @@
         </div>
 
     </div>
+
+    <div class="test"></div>
+
+
+
+    <span class="material-icons">pie_chart</span>          <!-- Filled -->
+    <span class="material-icons-outlined">pie_chart</span> <!-- Outlined -->
+    <span class="material-icons-round">pie_chart</span>    <!-- Round -->
+    <span class="material-icons-sharp">pie_chart</span>    <!-- Sharp -->
+    <span class="material-icons-two-tone">pie_chart</span> <!-- Two Tone -->
 
 </body>
 </html>
