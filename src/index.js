@@ -63,8 +63,13 @@ const screenController = {
         taskName.value = task.name
         
         const dueDateLabel = document.querySelector(".taskDetailsContainer .dueDateLabel")
+        dueDateLabel.innerHTML = ""
         if (new Date(task.dueDate).toString() != "Invalid Date") {
-            dueDateLabel.innerText = this.processDueDateInRelationToToday(task.dueDate)
+            dueDateLabel.appendChild(this.createIcon("calendar_today"))
+
+            const dueDate = document.createElement("p")
+            dueDate.innerText = this.processDueDateInRelationToToday(task.dueDate)
+            dueDateLabel.appendChild(dueDate)
         }
         else dueDateLabel.innerText = "Select Date"
 
@@ -282,48 +287,40 @@ const screenController = {
         const taskCheckboxes = document.getElementsByClassName("checkbox")
 
         for (const checkbox of taskCheckboxes) {
-            
-            checkbox.addEventListener("change", checkboxClicked)
-
-            function checkboxClicked(e) {
+            checkbox.addEventListener("change", e => {
                 const taskID = e.path[1].id
-                    if (checkbox.checked === true)
-                        coordinator.completeTask(taskID)
-                    else coordinator.unCompleteTask(taskID)
-            }
+                if (checkbox.checked === true)
+                    coordinator.completeTask(taskID)
+                else coordinator.unCompleteTask(taskID)
+            })
         }
 
         const taskDeleteButtons = document.getElementsByClassName("taskDeleteButton")
 
         for (const deleteButton of taskDeleteButtons) {
-            deleteButton.addEventListener("click", deleteButtonClicked)
+            deleteButton.addEventListener("click", e => {
+                const taskID = e.path[2].id
+                coordinator.deleteTask(taskID)
+            })
         }
         
-        function deleteButtonClicked(e) {
-            const taskID = e.path[2].id
-            coordinator.deleteTask(taskID)
-        }
-
         const dueDateInputs = document.querySelectorAll(".tasksContainer .dueDateInput")
 
         for (const dueDateInput of dueDateInputs) {
-            dueDateInput.addEventListener("change", dueDateInputClicked)
+            dueDateInput.addEventListener("change", e => {
+                const taskID = e.path[1].id
+                const newDate = e.srcElement.value
+                coordinator.updateTaskDueDate(taskID, newDate)
+            })
         }
 
-        function dueDateInputClicked(e) {
-            const taskID = e.path[1].id
-            const listID = e.path[1].dataset.listid
-            const newDate = e.srcElement.value
-            coordinator.updateTaskDueDate(taskID, listID, newDate)
-        }
         const tasks = document.querySelectorAll(".tasksUncompletedContainer .task .taskName")
 
         for (const task of tasks) {
-            task.addEventListener("click", taskClicked)
-        }
-        function taskClicked(e) {
-            const taskID = e.path[1].id
-            coordinator.selectTask(taskID)
+            task.addEventListener("click", (e) => {
+                const taskID = e.path[1].id
+                coordinator.selectTask(taskID)
+            })
         }
     },
     addEventListenerToAddNewTaskField: function() {
@@ -399,6 +396,10 @@ const screenController = {
             })
         })
     },
+    addEventListenerToListsToggle() {
+        const listsToggle = document.querySelector(".listsToggle")
+        listsToggle.addEventListener("click", this.closeListsContainer)
+    },
     highlightSelectedList: function(listID) {
         const previousSelectedList = document.querySelector(".listSelected")
         if (previousSelectedList) {
@@ -426,10 +427,6 @@ const screenController = {
             }
         }
     },
-    addEventListenerToListsToggle() {
-        const listsToggle = document.querySelector(".listsToggle")
-        listsToggle.addEventListener("click", () => console.log("123"))
-    },
     clearAddNewTask: function() {
         const addNewTaskName = document.getElementById("addNewTaskName")
         addNewTaskName.value = ""
@@ -451,6 +448,12 @@ const screenController = {
         taskDescription.value = ""
         taskDescription.classList.remove("taskDescriptionActive")
     },
+
+    closeListsContainer: function() {
+        console.log("123")
+        const listsContainer = document.querySelector(".listsContainer")
+        // listsContainer.transform.translate = 
+    }
 
 }
 
@@ -478,9 +481,9 @@ const coordinator = {
         this.addNewTask("Go to the gym", 0, today)
         this.addNewTask("Buy groceries 🥑", 0, today)
         this.addNewTask("Dental Appointment", 0, tomorrow)
-        this.addNewTask("Meeting with Bob", 0, tomorrow)
-        taskController.getTask(1, 0).description = 
+        taskController.getTaskByID("task3list0").description = 
             "Eat 2-3 hours before the appointment to reduce salivation. Don't forget to brush your teeth"
+        this.addNewTask("Meeting with Bob", 0, tomorrow)
         this.addNewTask("Interview", 0, in3Days)
         this.addNewTask("Hiking with friends", 0, in10Days)
         
@@ -596,17 +599,13 @@ const coordinator = {
 
         screenController.addEventListenersToLists()
     },
-    updateTaskDueDate: function(taskID, listID, newDate) {
-        taskController.updateTaskDueDate(this.convertTaskIDtoTaskIndex(taskID), listID, newDate)
-
-        this.selectTask(this.selectedTaskID) 
+    updateTaskDueDate: function(taskID, newDate) {
+        taskController.updateTaskDueDate(taskID, newDate)
+        this.updateScreen(false)
     },
     updateTask(newTask) {
         const task = document.querySelector(`#${this.selectedTaskID}`)
-        const taskID = task.id
-        const listID = task.dataset.listid
-
-        // taskController.updateTask(newTask, this.selectedListID, this.convertTaskIDtoTaskIndex(this.selectedTaskID))
+        taskController.updateTask(newTask, this.selectedTaskID)
         this.updateScreen(true)
     },
     convertTaskIDtoTaskIndex(taskID) {
@@ -722,12 +721,12 @@ const taskController = {
             list.id = i++
         })
     },
-    updateTaskDueDate: function(taskID, selectedListID, newDate) {
-        const task = this.getTask(taskID, selectedListID)
+    updateTaskDueDate: function(taskID, newDate) {
+        const task = this.getTaskByID(taskID)
         task.dueDate = new Date(newDate)
     },
-    updateTask: function (newTask, listID, taskID) {
-        const task = this.getTask(taskID, listID)
+    updateTask: function (newTask, taskID) {
+        const task = this.getTaskByID(taskID)
         if (newTask.name) task.name = newTask.name
         if (newTask.dueDate) task.dueDate = newTask.dueDate
         if (newTask.description) task.description = newTask.description
@@ -768,7 +767,7 @@ const taskController = {
                 const dayDifference = differenceInCalendarDays(dueDate, now)
 
                 if (dayDifference < 8) smartListThisWeek.tasks.push(task)
-                
+
                 if (dayDifference == 0) smartListToday.tasks.push(task)
                 else if (dayDifference == 1) smartListTomorrow.tasks.push(task)
             }

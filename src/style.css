@@ -58,6 +58,8 @@ h3 {
 
     display: flex;
     align-items: center;
+
+    border-bottom: 2px solid grey;
 }
 
 p, li, ul, ::placeholder, a, span, textarea, input, label {
@@ -99,7 +101,10 @@ header .material-icons-round {
 header .listsToggle {
     height: 50px;
     width: 50px;
-    background-color: grey;
+}
+header .listsToggle .material-icons-round {
+    font-size: 50px;
+
 }
 
 header .themeToggle {
@@ -117,6 +122,8 @@ header .themeToggle {
     display: grid;
     grid-template-columns: 1fr 2fr 1fr;
     grid-template-rows: 1fr;
+
+    /* display: flex; */
 
     padding: 0 var(--global-padding);
 
@@ -143,11 +150,16 @@ header .themeToggle {
 
     display: grid;
     grid-template-columns: 1fr;
-    grid-template-rows: var(--rowHeight) 1fr var(--rowHeight) 1fr;
-
-    align-items: flex-start;
-
+    grid-template-rows: var(--rowHeight) min-content var(--rowHeight) min-content;
+ 
     gap: 16px;
+
+    transition: 1s;
+
+}
+.listsContainer:hover {
+    transform: translateX(-27vw);
+
 }
 .regularListsContainer, .smartListsContainer {
     display: flex;
@@ -204,7 +216,7 @@ header .themeToggle {
 
     display: grid;
     grid-template-columns: 1fr;
-    grid-template-rows: var(--rowHeight) 50vh 25vh;
+    grid-template-rows: var(--rowHeight) 1fr 25vh;
 
     border-left: 2px solid grey;
     border-right: 2px solid grey;
@@ -338,6 +350,7 @@ header .themeToggle {
     width: 100%;
 
     border: none;
+    border-bottom: 2px solid grey;
 }
 .taskDetailsContainer .taskDescription,
 .taskDetailsContainer .taskDescriptionActive {
@@ -345,6 +358,7 @@ header .themeToggle {
     resize: none;
     transition: border 0.3s;
     padding: 8px;
+    height: 200px;
 }
 .taskDetailsContainer .taskDescriptionActive {
     border: 1px solid black;
@@ -353,6 +367,7 @@ header .themeToggle {
     display: flex;
     align-items: center;
     justify-content: start;
+    gap: 8px;
     height: 100%;
 }
 .taskDetailsContainer .dueDateInput {
