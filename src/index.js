@@ -1,7 +1,7 @@
+import 'material-icons/iconfont/material-icons.css';
 import './style.css';
 import differenceInCalendarDays from 'date-fns/differenceInCalendarDays'
 import { addMinutes, daysInWeek, set } from 'date-fns';
-import 'material-icons/iconfont/material-icons.css';
 // import { debug } from 'webpack';
 
 // Screen Controller
@@ -307,7 +307,7 @@ const screenController = {
         }
         
         function deleteButtonClicked(e) {
-            const taskID = e.path[1].id
+            const taskID = e.path[2].id
             coordinator.deleteTask(taskID)
         }
 
@@ -420,8 +420,10 @@ const screenController = {
             }
             
             const task = document.querySelector(`#${taskID}`)
-            task.classList.add("taskSelected")
-            task.classList.remove("task")
+            if (task) {
+                task.classList.add("taskSelected")
+                task.classList.remove("task")
+            }
         }
     },
     addEventListenerToListsToggle() {
@@ -449,7 +451,6 @@ const screenController = {
         taskDescription.value = ""
         taskDescription.classList.remove("taskDescriptionActive")
     },
-
 
 }
 
