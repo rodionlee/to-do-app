@@ -398,7 +398,7 @@ const screenController = {
     },
     addEventListenerToListsToggle() {
         const listsToggle = document.querySelector(".listsToggle")
-        listsToggle.addEventListener("click", this.closeListsContainer)
+        listsToggle.addEventListener("click", this.toggleListsContainer)
     },
     highlightSelectedList: function(listID) {
         const previousSelectedList = document.querySelector(".listSelected")
@@ -449,10 +449,12 @@ const screenController = {
         taskDescription.classList.remove("taskDescriptionActive")
     },
 
-    closeListsContainer: function() {
-        console.log("123")
+    toggleListsContainer: function() {
         const listsContainer = document.querySelector(".listsContainer")
-        // listsContainer.transform.translate = 
+        listsContainer.classList.toggle("listsContainerClosed")
+
+        const listsToggle = document.querySelector(".listsToggle")
+        listsToggle.classList.toggle("listsToggleOn")
     }
 
 }

@@ -101,10 +101,16 @@ header .material-icons-round {
 header .listsToggle {
     height: 50px;
     width: 50px;
+
+    transition: 0.3s;
 }
 header .listsToggle .material-icons-round {
     font-size: 50px;
 
+}
+
+header .listsToggleOn {
+    transform: rotate(180deg);
 }
 
 header .themeToggle {
@@ -119,11 +125,11 @@ header .themeToggle {
     width: 100vw;
     height: 90vh;
 
-    display: grid;
+    /* display: grid;
     grid-template-columns: 1fr 2fr 1fr;
-    grid-template-rows: 1fr;
+    grid-template-rows: 1fr; */
 
-    /* display: flex; */
+    display: flex;
 
     padding: 0 var(--global-padding);
 
@@ -146,21 +152,27 @@ header .themeToggle {
 /* Lists Container */
 
 .listsContainer {
-    grid-column: 1 / 2;
 
     display: grid;
     grid-template-columns: 1fr;
     grid-template-rows: var(--rowHeight) min-content var(--rowHeight) min-content;
  
-    gap: 16px;
+    /* gap: 16px; */
 
-    transition: 1s;
+    width: 25vw;
 
+    transition: 0.3s ease-out;
+
+    
 }
-.listsContainer:hover {
-    transform: translateX(-27vw);
-
+.listsContainerClosed {
+    width: 0;
+    padding-right: 0;
+    padding-left: 0;
+    overflow: hidden;
 }
+
+
 .regularListsContainer, .smartListsContainer {
     display: flex;
     flex-direction: column;
@@ -171,10 +183,11 @@ header .themeToggle {
     align-items: center;
 
     padding: 8px;
-
-    /* border-radius: 12px; */
+    
     border: 1px solid white;
 
+    white-space: nowrap;
+    
     transition: var(--hover-transition);
 }
 .listName {
@@ -212,11 +225,13 @@ header .themeToggle {
 /* Tasks Container */
 
 .tasksContainer {
-    grid-column: 2 / 3;
+    /* grid-column: 2 / 3; */
+
+    flex: 1;
 
     display: grid;
     grid-template-columns: 1fr;
-    grid-template-rows: var(--rowHeight) 1fr 25vh;
+    grid-template-rows: var(--rowHeight) min-content 25vh;
 
     border-left: 2px solid grey;
     border-right: 2px solid grey;
@@ -330,7 +345,9 @@ header .themeToggle {
 /* Task Details Container */
 
 .taskDetailsContainer {
-    grid-column: 3 / 4;
+    /* grid-column: 3 / 4; */
+
+    width: 25vw;
 
     display: grid;
     grid-template-columns: 1fr;
