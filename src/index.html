@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><%= htmlWebpackPlugin.options.title %></title>
 </head>
-<body>
+<body class="lightTheme">
 
     <header>
         <div class="listsToggle">
@@ -15,7 +15,10 @@
         <h1>
             <span class="material-icons-round">done_all</span>
             Ro To-Do</h1>
-        <div class="themeToggle"></div>
+        <input type="checkbox" name="" id="themeToggle">
+        <label class="themeToggle" for="themeToggle">
+            <div class="themeToggleCircle"></div>
+        </label>
 
     </header>
 

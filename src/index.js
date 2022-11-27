@@ -400,6 +400,10 @@ const screenController = {
         const listsToggle = document.querySelector(".listsToggle")
         listsToggle.addEventListener("click", this.toggleListsContainer)
     },
+    addEventListenerToThemeToggle() {
+        const themeToggle = document.querySelector(".themeToggle")
+        themeToggle.addEventListener("click", this.toggleTheme)
+    },
     highlightSelectedList: function(listID) {
         const previousSelectedList = document.querySelector(".listSelected")
         if (previousSelectedList) {
@@ -448,13 +452,23 @@ const screenController = {
         taskDescription.value = ""
         taskDescription.classList.remove("taskDescriptionActive")
     },
-
     toggleListsContainer: function() {
         const listsContainer = document.querySelector(".listsContainer")
         listsContainer.classList.toggle("listsContainerClosed")
 
         const listsToggle = document.querySelector(".listsToggle")
         listsToggle.classList.toggle("listsToggleOn")
+
+        const tasksContainer = document.querySelector(".tasksContainer")
+        tasksContainer.classList.toggle("tasksContainerListsToggleOn")
+
+        const taskDetailsContainer = document.querySelector(".taskDetailsContainer")
+        taskDetailsContainer.classList.toggle("taskDetailsContainerListsToggleOn")
+    },
+    toggleTheme: function() {
+        const body = document.querySelector("body")
+        body.classList.toggle("lightTheme")
+        body.classList.toggle("darkTheme")
     }
 
 }
@@ -470,6 +484,7 @@ const coordinator = {
         screenController.addEventListenersToTaskDetails()
         screenController.addEventListenerToListsToggle()
         screenController.addEventListenersToSmartLists()
+        screenController.addEventListenerToThemeToggle()
     },
     createDummyListsAndTasks() {
         const today = new Date()

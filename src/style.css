@@ -4,31 +4,86 @@
     padding: 0;
     margin: 0;
     box-sizing: border-box;
-    /* border: .1px solid lightgray; */
 }
 
 :root {
+    
+    /* Light Theme */
 
-    --color-main: rgb(98, 210, 162);
-    --color-main-light: rgb(157, 243, 196);
-    --color-main-dark: rgb(31, 171, 137);
-    --color-grey: rgb(232, 247, 243);
-    --color-accent: rgb(98, 210, 162);
-    /* --color-accent: rgb(235, 233, 87); */
+    --light-theme-primary: #81c784;
+    --light-theme-primary-light: #b2fab4;
+    --light-theme-primary-dark: #519657;
+    
+    --light-theme-background: #ffffff;
+    --light-theme-surface: #e8f5e9;
 
+    --light-theme-border: 2px solid grey;
+    
+    --light-theme-secondary-text: grey;
+
+    --light-theme-box-shadow: 2px 2px 10px 2px grey;
+
+    /* Dark Theme */
+    
+    --dark-theme-primary: #4caf50;
+    --dark-theme-primary-light: #80e27e;
+    --dark-theme-primary-dark: #087f23;
+
+    --dark-theme-background: #373737;
+    --dark-theme-surface: #424242;
+
+    --dark-theme-border: 2px solid rgb(191, 191, 191);
+
+    --dark-theme-secondary-text: rgb(156, 156, 156);
+
+    --dark-theme-box-shadow: 2px 2px 10px 2px rgb(66, 66, 66);
+
+    --sun-color-for-theme-toggle: rgb(255, 190, 68);
+    --moon-color-for-theme-toggle: rgb(255, 255, 255);
+
+    /* Global */
+
+    --transition: 0.3s;
 
     --rowHeight: 50px;
 
-    --taskBackgroundColor: var(--color-grey);
-
-    --hover-transition: 0.3s;
-    --hover-background-color: var(--color-main-light);
-    --hover-border: 1px solid rgb(138, 138, 138);
-
-    --selected-background-color: var(--color-accent);
-    --selected-border: 1px solid rgb(79, 79, 79);
-
     --global-padding: 4vw;
+}
+
+.lightTheme {
+    --primary: var(--light-theme-primary);
+    --primary-light: var(--light-theme-primary-light);
+    --primary-dark: var(--light-theme-primary-dark);
+
+    --background: var(--light-theme-background);
+    --surface: var(--light-theme-surface);
+
+    --border: var(--light-theme-border);
+
+    --text: black;
+    --secondary-text: var(--light-theme-secondary-text);
+
+    --box-shadow: var(--light-theme-box-shadow);
+    
+    transition: var(--transition);
+}
+.darkTheme {
+    
+    --primary: var(--dark-theme-primary);
+    --primary-light: var(--dark-theme-primary-dark);
+    --primary-dark: var(--dark-theme-primary-dark);
+    
+    --background: var(--dark-theme-background);
+    --surface: var(--dark-theme-surface);
+
+    --border: var(--dark-theme-border);
+    
+    --text: white;
+    --secondary-text: var(--dark-theme-secondary-text);
+    
+    --box-shadow: var(--dark-theme-box-shadow);
+
+    transition: var(--transition);
 }
 
 
@@ -37,38 +92,35 @@
 
 * {
     font-family: Arial, Helvetica, sans-serif;
+    color: var(--text);
 }
-
 h1 {
     font-size: 28px;
     line-height: 1;
 }
-
 h2 {
     font-size: 24px;
     line-height: 1;
 }
-
 h3 {
     font-size: 22px;
     line-height: 1;
-    color: grey;
+    color: var(--secondary-text);
 
     height: 100%;
 
     display: flex;
     align-items: center;
 
-    border-bottom: 2px solid grey;
+    border-bottom: var(--border);
 }
-
 p, li, ul, ::placeholder, a, span, textarea, input, label {
     font-size: 18px;
     line-height: 1.5;
 }
-
 body {
     height: 100vh;
+    background-color: var(--background)
 }
 .material-icons-round {
     font-size: 20px;
@@ -83,40 +135,82 @@ header {
 
     height: 10vh;
 
-    background-color: var(--color-main-light);
+    background-color: var(--primary);
 
     padding: 0 var(--global-padding);
 }
-
 header h1 {
     display: flex;
     align-items: center;
     gap: 8px;
 }
-
 header .material-icons-round {
     font-size: 30px;
 }
-
 header .listsToggle {
     height: 50px;
     width: 50px;
 
-    transition: 0.3s;
+    transition: var(--transition);
 }
 header .listsToggle .material-icons-round {
     font-size: 50px;
 
 }
-
 header .listsToggleOn {
     transform: rotate(180deg);
 }
-
+header input#themeToggle {
+    width: 0;
+    height: 0;
+    visibility: hidden;
+    position: absolute;
+}
 header .themeToggle {
+    width: 100px;
     height: 50px;
-    width: 50px;
-    background-color: grey;
+
+    border-color: var(--border);
+    background-color: var(--surface);
+    border: var(--border);
+
+    border-radius: 50px;
+
+    display: flex;
+    flex-direction: column;
+    
+    padding: 5px;
+}
+
+.themeToggleCircle {
+    margin-left: 0;
+    margin-right: auto;
+    
+    width: calc(50% - 5px);
+    height: 100%;
+
+    background-color: var(--sun-color-for-theme-toggle);
+
+    box-shadow: none;
+    
+    border-radius: 50px;
+    transition: var(--transition);
+}
+
+#themeToggle:checked + .themeToggle .themeToggleCircle {
+    margin-right: 0;
+    margin-left: calc(100px - 50% - 10px);
+    /* 
+    Transition with this property does not work for some reason
+    Worth posting about
+    */
+    /* margin-left: auto; */
+
+    background-color: rgba(255, 255, 255, 0);
+
+    box-shadow: inset 18px -4px 0px 0px var(--moon-color-for-theme-toggle);
+    
+    transition: var(--transition);
 }
 
 /* Main Container */
@@ -125,15 +219,11 @@ header .themeToggle {
     width: 100vw;
     height: 90vh;
 
-    /* display: grid;
-    grid-template-columns: 1fr 2fr 1fr;
-    grid-template-rows: 1fr; */
-
     display: flex;
 
     padding: 0 var(--global-padding);
 
-    border-top: 2px solid grey;
+    border-top: var(--border);
 }
 
 
@@ -148,6 +238,10 @@ header .themeToggle {
     height: var(--rowHeight);
     padding: 8px;
 }
+input, textarea {
+    background-color: var(--background);
+    border: none;
+}
 
 /* Lists Container */
 
@@ -157,13 +251,9 @@ header .themeToggle {
     grid-template-columns: 1fr;
     grid-template-rows: var(--rowHeight) min-content var(--rowHeight) min-content;
  
-    /* gap: 16px; */
-
     width: 25vw;
 
-    transition: 0.3s ease-out;
-
-    
+    transition: var(--transition);
 }
 .listsContainerClosed {
     width: 0;
@@ -171,8 +261,6 @@ header .themeToggle {
     padding-left: 0;
     overflow: hidden;
 }
-
-
 .regularListsContainer, .smartListsContainer {
     display: flex;
     flex-direction: column;
@@ -184,11 +272,9 @@ header .themeToggle {
 
     padding: 8px;
     
-    border: 1px solid white;
-
     white-space: nowrap;
     
-    transition: var(--hover-transition);
+    transition: var(--transition);
 }
 .listName {
     flex: 1;
@@ -198,14 +284,12 @@ header .themeToggle {
     justify-content: start;
     gap: 8px;
 }
-
 .list:hover .listDeleteButton, .listSelected:hover .listDeleteButton {
     display: flex;
 }
 .list:hover {
-    background-color: var(--hover-background-color);
-    /* border: var(--hover-border); */
-    transition: var(--hover-transition);
+    background-color: var(--primary-light);
+    transition: var(--transition);
 }
 .listDeleteButton {
     width: 16px;
@@ -218,26 +302,30 @@ header .themeToggle {
     display: none;
 }
 .listSelected {
-    background-color: var(--selected-background-color);
-    border: var(--selected-border);
+    background-color: var(--primary);
+    border: var(--border);
 }
 
 /* Tasks Container */
 
 .tasksContainer {
-    /* grid-column: 2 / 3; */
-
     flex: 1;
 
     display: grid;
     grid-template-columns: 1fr;
     grid-template-rows: var(--rowHeight) min-content 25vh;
 
-    border-left: 2px solid grey;
-    border-right: 2px solid grey;
+    border-left: var(--border);
+    border-right: var(--border);
 
     gap: 16px;
+
+    transition: var(--transition);
 }
+.tasksContainerListsToggleOn {
+    border-left: none;
+}
+
 .selectedListName {
     grid-column: 1 / 3;
 }
@@ -257,16 +345,12 @@ header .themeToggle {
     display: flex;
     align-items: center;
 
-    /* display: grid;
-    grid-template-columns: 24px 1fr 1fr 1px 24px; */
-
     height: var(--rowHeight);
     padding: 0 8px;
 
     gap: 8px;
 
-    background-color: var(--taskBackgroundColor);
-    /* border-radius: 12px; */
+    background-color: var(--surface);
 }
 .task .checkbox {
     height: 100%;
@@ -303,9 +387,8 @@ header .themeToggle {
     width: 0;
 }
 .task:hover, .taskCompleted:hover {
-    background-color: var(--hover-background-color);
-    /* border: var(--hover-border); */
-    transition: var(--hover-transition);
+    background-color: var(--primary-light);
+    transition: var(--transition);
 }
 .taskDeleteButton {
     width: 16px;
@@ -321,7 +404,7 @@ header .themeToggle {
     grid-template-columns: 1fr;
     align-content: start;
 
-    color: grey;
+    color: var(--secondary-text);
 
     overflow: scroll;
 }
@@ -329,14 +412,18 @@ header .themeToggle {
     text-decoration: line-through;
 }
 .tasksUncompletedContainer .taskSelected {
-    background-color: var(--selected-background-color);
-    border: var(--selected-border)
+    background-color: var(--primary);
+    box-shadow: var(--box-shadow);
+    z-index: 1;
+    border: var(--border);
+
+    transition: var(--transition);
 }
 .inputField::placeholder {
-    color: grey;
+    color: var(--secondary-text);
 }
 .addTaskDueDateLabel .material-icons-round {
-    color: grey;
+    color: var(--secondary-text);
 }
 
 
@@ -345,21 +432,26 @@ header .themeToggle {
 /* Task Details Container */
 
 .taskDetailsContainer {
-    /* grid-column: 3 / 4; */
-
     width: 25vw;
 
     display: grid;
     grid-template-columns: 1fr;
     grid-template-rows: var(--rowHeight) var(--rowHeight) 1fr;
     gap: 16px;
+
+    transition: var(--transition);
 }
+
+.taskDetailsContainerListsToggleOn {
+    width: 30vw;
+}
+
 .taskDetailsContainer .taskName::placeholder, 
 .taskDetailsContainer .taskName {
     font-size: 22px;
     line-height: 1;
     font-weight: 700;
-    color: grey;
+    color: var(--secondary-text);
 
     display: flex;
     align-items: center;
@@ -367,18 +459,18 @@ header .themeToggle {
     width: 100%;
 
     border: none;
-    border-bottom: 2px solid grey;
+    border-bottom: var(--border);
 }
 .taskDetailsContainer .taskDescription,
 .taskDetailsContainer .taskDescriptionActive {
     border: none;
     resize: none;
-    transition: border 0.3s;
+    transition: var(--transition);
     padding: 8px;
     height: 200px;
 }
 .taskDetailsContainer .taskDescriptionActive {
-    border: 1px solid black;
+    border: var(--border)
 }
 .taskDetailsContainer .dueDateLabel {
     display: flex;
