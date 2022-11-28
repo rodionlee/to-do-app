@@ -498,10 +498,6 @@ const coordinator = {
         this.addNewTask("Meeting with Bob", 0, tomorrow)
         this.addNewTask("Interview", 0, in3Days)
         this.addNewTask("Hiking with friends", 0, in10Days)
-        this.addNewTask("Hiking with friends 2", 0, in10Days)
-        this.addNewTask("Hiking with friends 3", 0, in10Days)
-        this.addNewTask("Hiking with friends 4", 0, in10Days)
-        // this.addNewTask("Hiking with friends 5", 0, in10Days)
         
         this.addNewList("Groceries 🥑")
 
@@ -607,7 +603,6 @@ const coordinator = {
     deleteTask: function(taskID) {
         taskController.deleteTask(taskID)
 
-        // Error started from here
         const selectedTaskIndex = taskController.getTaskIndexByID(this.selectedTaskID)
         const taskIndex = taskController.getTaskIndexByID(taskID)
         
