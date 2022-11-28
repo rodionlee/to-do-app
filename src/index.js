@@ -9,7 +9,6 @@ import { addMinutes, daysInWeek, set } from 'date-fns';
 const screenController = {
 
     updateScreen: function(displayData) {
-
         this.displayLists(displayData.myLists)
         this.displayListName(displayData.listName)
         this.highlightSelectedList(displayData.listID)
@@ -279,7 +278,6 @@ const screenController = {
         for (const deleteButton of listDeleteButtons) {
             deleteButton.addEventListener("click", (e) => {
                 const listID = e.path[1].id
-                console.log(listID)
                 coordinator.deleteList(listID)
             })
         }
@@ -413,9 +411,6 @@ const screenController = {
 
         const list = document.getElementById(listID)
         list.classList.toggle("listSelected")
-
-        // const body = document.querySelector("body")
-        // body.appendChild(list)
     },
     highlightSelectedTask: function(taskID) {
         if (taskID) {
@@ -477,7 +472,7 @@ const screenController = {
 
 const coordinator = {
     selectedListID: 0,
-    selectedTaskID: 0,
+    selectedTaskID: "task0list0",
     initialize: function() {
         this.createDummyListsAndTasks()
 
@@ -503,6 +498,10 @@ const coordinator = {
         this.addNewTask("Meeting with Bob", 0, tomorrow)
         this.addNewTask("Interview", 0, in3Days)
         this.addNewTask("Hiking with friends", 0, in10Days)
+        this.addNewTask("Hiking with friends 2", 0, in10Days)
+        this.addNewTask("Hiking with friends 3", 0, in10Days)
+        this.addNewTask("Hiking with friends 4", 0, in10Days)
+        // this.addNewTask("Hiking with friends 5", 0, in10Days)
         
         this.addNewList("Groceries 🥑")
 
@@ -535,7 +534,12 @@ const coordinator = {
             displayData.listName = displayData.myLists[displayData.listIndex].name
             displayData.tasks = displayData.myLists[displayData.listIndex].tasks
         }
-        displayData.task = taskController.getTaskByID(displayData.taskID)
+        
+        if (displayData.highLightTask == false) {
+            displayData.taskID = "task0list0"
+        } else {
+            displayData.task = taskController.getTaskByID(displayData.taskID)
+        }
 
         screenController.updateScreen(displayData)
     },
@@ -545,6 +549,9 @@ const coordinator = {
         this.updateScreen(false)
     },
     addNewTask: function(taskName, listID, dueDate) {
+        if (String(listID).includes("smart")) {
+            listID = 0
+        }
         const task = taskController.addNewTask(taskName, listID, dueDate)
         this.selectedTaskID = task.id
         this.updateScreen(true)
@@ -560,7 +567,15 @@ const coordinator = {
         }
     },
     processAddNewTaskField: function(taskName, dueDate) {
-        this.addNewTask(taskName, this.selectedListID, dueDate)
+        let listID = 0
+
+        if (String(this.selectedListID).includes("smart")) {
+            listID = 0
+        } else {
+            listID = this.selectedListID
+        }
+
+        this.addNewTask(taskName, listID, dueDate)
         screenController.clearAddNewTask()
     },
     processAddNewListField: function(input) {
@@ -570,15 +585,18 @@ const coordinator = {
     },
     completeTask: function(taskID) {
         taskController.completeTask(taskID)
-        
-        if (this.selectedTaskID < taskID) {
-            this.updateScreen(true)
-        }
-        else if (this.selectedTaskID > taskID) {
-            this.updateScreen(true)
+        const selectedTaskIndex = taskController.getTaskIndexByID(this.selectedTaskID)
+        const taskIndex = taskController.getTaskIndexByID(taskID)
 
+        
+        if (selectedTaskIndex < taskIndex) {
+            this.updateScreen(true)
         }
-        else if (this.selectedTaskID == taskID) {
+        else if (selectedTaskIndex > taskIndex) {
+            // this.reduceSelectedTaskIDBy1()
+            this.updateScreen(true)
+        }
+        else if (selectedTaskIndex == taskIndex) {
             this.updateScreen(false);
         }
     },
@@ -589,15 +607,16 @@ const coordinator = {
     deleteTask: function(taskID) {
         taskController.deleteTask(taskID)
 
-        const selectedTaskIndex = this.selectedTaskID.slice(0, 5)
-        const taskIndex = taskID.slice(0, 5)
-
+        // Error started from here
+        const selectedTaskIndex = taskController.getTaskIndexByID(this.selectedTaskID)
+        const taskIndex = taskController.getTaskIndexByID(taskID)
+        
         if (selectedTaskIndex < taskIndex) {
-            this.updateScreen(true)
+            this.updateScreen(false)
         }
         else if (selectedTaskIndex > taskIndex) {
-            this.reduceSelectedTaskIDBy1()
-            this.updateScreen(true)
+            // this.reduceSelectedTaskIDBy1()
+            this.updateScreen(false)
         }
         else {
             this.updateScreen(false)
@@ -626,17 +645,15 @@ const coordinator = {
         this.updateScreen(true)
     },
     convertTaskIDtoTaskIndex(taskID) {
-        taskID = String(taskID)
-        taskID = taskID.slice(4, 1)
-        return taskID
+        const taskIndex = taskController.getTaskIndexByID(taskID)
+        return taskIndex
     },
     convertTaskIDtoListIndex(taskID) {
-        listID = String(taskID)
-        listID = listID.slice(9, 1)
-        return listID
+        const listIndex = taskController.getListIndexByID(taskID)
+        return listIndex
     },
     reduceSelectedTaskIDBy1() {
-        this.selectedTaskID = "task" + (this.selectedTaskID.slice(4, 5) - 1) + "list" + this.selectedListID
+        this.selectedTaskID = "task" + (taskController.getTaskIndexByID(this.selectedTaskID) - 1) + "list" + this.selectedListID
     }
 }
 
@@ -696,16 +713,23 @@ const taskController = {
         return this.smartLists
     },
     getTaskByID(taskID) {
-        const taskIndex = Number(String(taskID).slice(4, 5))
-        const listIndex = Number(String(taskID).slice(9, 10))
+        const taskIndex = this.getTaskIndexByID(taskID)
+        const listIndex = this.getListIndexByID(taskID)
         return this.lists[listIndex].tasks[taskIndex]
     },
     getTaskIndexByID(taskID) {
-        const taskIndex = String(taskID).slice(4, 5)
+        
+        let taskIndex = String(taskID).split(/(task|list)/)
+        taskIndex = taskIndex[2]
+        taskIndex = Number(taskIndex)
+        
         return taskIndex
     },
     getListIndexByID(taskID) {
-        const listIndex = String(taskID).slice(9, 10)
+        let listIndex = String(taskID).split(/(task|list)/)
+        listIndex = listIndex[4]
+        listIndex = Number(listIndex)
+        
         return listIndex
     },
     completeTask: function(taskID) {
@@ -794,6 +818,7 @@ const taskController = {
 
         
     }
+
 }
 
 

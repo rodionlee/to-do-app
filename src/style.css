@@ -377,7 +377,6 @@ input, textarea {
 .tasksUncompletedContainer .addTaskDueDateInput {
     visibility: hidden;
     position: absolute;
-    /* right: 10vw; */
 }
 .tasksUncompletedContainer .dueDateLabel,
 .tasksCompletedContainer .dueDateLabel {
@@ -412,7 +411,7 @@ input, textarea {
 
     color: var(--secondary-text);
 
-    overflow: scroll;
+    /* overflow: scroll; */
 }
 .taskCompleted .taskName{
     text-decoration: line-through;
