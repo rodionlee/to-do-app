@@ -38,6 +38,13 @@
 
     --dark-theme-box-shadow: 2px 2px 10px 2px rgb(66, 66, 66);
 
+    /* Theme toggle */
+
+    --toggle-width: 80px;
+    --toggle-height: calc(var(--toggle-width) / 2);
+    --toggle-padding: 5px;
+    --toggle-border-width: 2px;
+    --toggle-circle: calc(var(--toggle-width) / 2 - var(--toggle-padding) * 2 - var(--toggle-border-width) * 2);
     --sun-color-for-theme-toggle: rgb(255, 190, 68);
     --moon-color-for-theme-toggle: rgb(255, 255, 255);
 
@@ -167,39 +174,37 @@ header input#themeToggle {
     position: absolute;
 }
 header .themeToggle {
-    width: 100px;
-    height: 50px;
+    width: var(--toggle-width);
+    height: var(--toggle-height);
 
     border-color: var(--border);
     background-color: var(--surface);
     border: var(--border);
-
-    border-radius: 50px;
+    border-width: var(--toggle-border-width);
+    border-radius: var(--toggle-width);
 
     display: flex;
     flex-direction: column;
     
-    padding: 5px;
+    padding: var(--toggle-padding);
 }
-
 .themeToggleCircle {
     margin-left: 0;
     margin-right: auto;
     
-    width: calc(50% - 5px);
-    height: 100%;
+    width: var(--toggle-circle);
+    height: var(--toggle-height);
 
     background-color: var(--sun-color-for-theme-toggle);
 
     box-shadow: none;
     
-    border-radius: 50px;
+    border-radius: var(--toggle-width);
     transition: var(--transition);
 }
-
 #themeToggle:checked + .themeToggle .themeToggleCircle {
     margin-right: 0;
-    margin-left: calc(100px - 50% - 10px);
+    margin-left: calc(var(--toggle-width) - var(--toggle-circle) - var(--toggle-padding) * 2 - var(--toggle-border-width) * 2);
     /* 
     Transition with this property does not work for some reason
     Worth posting about
@@ -208,7 +213,7 @@ header .themeToggle {
 
     background-color: rgba(255, 255, 255, 0);
 
-    box-shadow: inset 18px -4px 0px 0px var(--moon-color-for-theme-toggle);
+    box-shadow: inset calc(var(--toggle-height) / 6 * (-1)) calc(var(--toggle-width) / 10 * (-1)) 0px 0px var(--moon-color-for-theme-toggle);
     
     transition: var(--transition);
 }
@@ -246,10 +251,11 @@ input, textarea {
 /* Lists Container */
 
 .listsContainer {
-
     display: grid;
     grid-template-columns: 1fr;
     grid-template-rows: var(--rowHeight) min-content var(--rowHeight) min-content;
+
+    gap: 16px;
  
     width: 25vw;
 
@@ -289,7 +295,6 @@ input, textarea {
 }
 .list:hover {
     background-color: var(--primary-light);
-    transition: var(--transition);
 }
 .listDeleteButton {
     width: 16px;
@@ -304,6 +309,8 @@ input, textarea {
 .listSelected {
     background-color: var(--primary);
     border: var(--border);
+    box-shadow: var(--box-shadow);
+    z-index: 1;
 }
 
 /* Tasks Container */
@@ -325,7 +332,6 @@ input, textarea {
 .tasksContainerListsToggleOn {
     border-left: none;
 }
-
 .selectedListName {
     grid-column: 1 / 3;
 }
@@ -336,8 +342,6 @@ input, textarea {
     display: grid;
     grid-template-columns: 1fr 24px;
     align-content: start;
-
-    overflow: scroll;
 }
 .task, .taskCompleted, .taskSelected {
     grid-column: 1 / 3;
@@ -351,6 +355,8 @@ input, textarea {
     gap: 8px;
 
     background-color: var(--surface);
+
+    transition: var(--transition);
 }
 .task .checkbox {
     height: 100%;
@@ -414,10 +420,8 @@ input, textarea {
 .tasksUncompletedContainer .taskSelected {
     background-color: var(--primary);
     box-shadow: var(--box-shadow);
-    z-index: 1;
     border: var(--border);
-
-    transition: var(--transition);
+    z-index: 1;
 }
 .inputField::placeholder {
     color: var(--secondary-text);
@@ -441,11 +445,9 @@ input, textarea {
 
     transition: var(--transition);
 }
-
 .taskDetailsContainerListsToggleOn {
     width: 30vw;
 }
-
 .taskDetailsContainer .taskName::placeholder, 
 .taskDetailsContainer .taskName {
     font-size: 22px;
@@ -483,3 +485,4 @@ input, textarea {
     visibility: hidden;
     position: absolute;
 }
+

@@ -265,7 +265,7 @@ const screenController = {
         return returnDate
     },
     addEventListenersToLists: function() {
-        const listNames = document.getElementsByClassName("listName")
+        const listNames = document.querySelectorAll(".listName")
 
         for (const item of listNames) {
             item.addEventListener("click", (e) => {
@@ -279,6 +279,7 @@ const screenController = {
         for (const deleteButton of listDeleteButtons) {
             deleteButton.addEventListener("click", (e) => {
                 const listID = e.path[1].id
+                console.log(listID)
                 coordinator.deleteList(listID)
             })
         }
@@ -407,27 +408,26 @@ const screenController = {
     highlightSelectedList: function(listID) {
         const previousSelectedList = document.querySelector(".listSelected")
         if (previousSelectedList) {
-            previousSelectedList.classList.remove("listSelected")
-            previousSelectedList.classList.add("list")
+            previousSelectedList.classList.toggle("listSelected")
         }
 
         const list = document.getElementById(listID)
-        list.classList.add("listSelected")
-        list.classList.remove("list")
+        list.classList.toggle("listSelected")
+
+        // const body = document.querySelector("body")
+        // body.appendChild(list)
     },
     highlightSelectedTask: function(taskID) {
         if (taskID) {
 
-            const previousSelectedTask = document.querySelector(".tasksUncompletedContainer .taskSelected")
-            if (previousSelectedTask) {
-                previousSelectedTask.classList.remove("taskSelected")
-                previousSelectedTask.classList.add("task")
-            }
+            // const previousSelectedTask = document.querySelector(".tasksUncompletedContainer .taskSelected")
+            // if (previousSelectedTask) {
+            //     previousSelectedTask.classList.toggle("taskSelected")
+            // }
             
             const task = document.querySelector(`#${taskID}`)
             if (task) {
-                task.classList.add("taskSelected")
-                task.classList.remove("task")
+                task.classList.toggle("taskSelected")
             }
         }
     },
